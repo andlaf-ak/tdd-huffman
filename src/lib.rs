@@ -4,5 +4,5 @@
 
 pub mod frequency_map;
 
-// Re-export main functions for easier access
-pub use frequency_map::count_byte_frequencies;
+// Re-export main functions and types for easier access
+pub use frequency_map::{count_byte_frequencies, ByteFrequencyMap};

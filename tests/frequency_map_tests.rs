@@ -19,6 +19,6 @@ fn count_different_bytes_with_different_frequencies() {
     let input = [65u8, 66u8, 65u8, 67u8, 66u8, 66u8];
     let frequencies = count_byte_frequencies(&input);
     assert_eq!(frequencies.get(&65), Some(&2)); // 'A' appears 2 times
-    assert_eq!(frequencies.get(&66), Some(&3)); // 'B' appears 3 times  
+    assert_eq!(frequencies.get(&66), Some(&3)); // 'B' appears 3 times
     assert_eq!(frequencies.get(&67), Some(&1)); // 'C' appears 1 time
 }
