@@ -1,6 +1,6 @@
 # TDD Huffman
 
-A Test-Driven Development implementation of Huffman coding in Rust.
+A Test-Driven Development implementation of Huffman compression in Rust.
 
 ## Prerequisites
 
