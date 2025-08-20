@@ -63,3 +63,7 @@ pub fn merge_with_leaf_node(internal_node: HuffmanNode, leaf: SymbolFrequency) -
     let leaf_node = HuffmanNode::new_leaf(leaf.0, leaf.1);
     HuffmanNode::new_internal(internal_node, leaf_node)
 }
+
+pub fn merge_internal_nodes(left_node: HuffmanNode, right_node: HuffmanNode) -> HuffmanNode {
+    HuffmanNode::new_internal(left_node, right_node)
+}
