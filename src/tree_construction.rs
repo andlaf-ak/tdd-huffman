@@ -1,4 +1,4 @@
-pub type SymbolFrequency = (u8, usize);
+use crate::node_selection::SymbolFrequency;
 
 #[derive(Debug, PartialEq, Clone)]
 pub struct HuffmanNode {
@@ -9,6 +9,15 @@ pub struct HuffmanNode {
 }
 
 impl HuffmanNode {
+    fn new_internal(left: SymbolFrequency, right: SymbolFrequency) -> Self {
+        Self {
+            frequency: left.1 + right.1,
+            symbol: None,
+            left_child: Some(left),
+            right_child: Some(right),
+        }
+    }
+
     pub fn frequency(&self) -> usize {
         self.frequency
     }
@@ -27,10 +36,5 @@ impl HuffmanNode {
 }
 
 pub fn merge_leaf_nodes(left: SymbolFrequency, right: SymbolFrequency) -> HuffmanNode {
-    HuffmanNode {
-        frequency: left.1 + right.1,
-        symbol: None,
-        left_child: Some(left),
-        right_child: Some(right),
-    }
+    HuffmanNode::new_internal(left, right)
 }
