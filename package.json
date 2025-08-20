@@ -7,7 +7,9 @@
     "format": "make format",
     "lint": "make lint", 
     "test": "make test",
-    "check": "make format && make lint && make test"
+    "check": "make check",
+    "precommit": "make format && make lint",
+    "prepush": "make test"
   },
   "devDependencies": {
     "husky": "^9.0.11"
