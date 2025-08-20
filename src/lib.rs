@@ -10,5 +10,5 @@ pub mod tree_construction;
 pub use frequency_map::{count_byte_frequencies, ByteFrequencyMap};
 pub use node_selection::{select_nodes, NodeCollection, SymbolFrequency};
 pub use tree_construction::{
-    merge_internal_and_leaf_nodes, merge_internal_nodes, merge_leaf_nodes, merge_nodes, HuffmanNode,
+    merge_internal_and_leaf_nodes, merge_leaf_nodes, merge_nodes, HuffmanNode,
 };

@@ -1,4 +1,4 @@
-use tdd_huffman::{merge_internal_and_leaf_nodes, merge_internal_nodes, merge_leaf_nodes};
+use tdd_huffman::{merge_internal_and_leaf_nodes, merge_leaf_nodes, merge_nodes};
 
 #[test]
 fn merge_two_leaf_nodes() {
@@ -12,11 +12,11 @@ fn merge_two_leaf_nodes() {
     // Internal nodes should not have a symbol value
     assert!(merged_node.symbol().is_none());
     // Should have two child nodes
-    assert!(merged_node.left_child_node().is_some());
-    assert!(merged_node.right_child_node().is_some());
+    assert!(merged_node.left_child().is_some());
+    assert!(merged_node.right_child().is_some());
     // The child nodes should be leaves with the original data
-    let left_child = merged_node.left_child_node().unwrap();
-    let right_child = merged_node.right_child_node().unwrap();
+    let left_child = merged_node.left_child().unwrap();
+    let right_child = merged_node.right_child().unwrap();
     assert_eq!(left_child.as_leaf(), Some(left_node));
     assert_eq!(right_child.as_leaf(), Some(right_node));
 }
@@ -37,11 +37,11 @@ fn merge_leaf_node_with_non_leaf_node() {
     // Should be an internal node (no symbol)
     assert!(merged_node.symbol().is_none());
     // Should have the internal node as left child and leaf as right child
-    assert!(merged_node.left_child_node().is_some());
-    assert!(merged_node.right_child_node().is_some());
+    assert!(merged_node.left_child().is_some());
+    assert!(merged_node.right_child().is_some());
 
-    let left_child = merged_node.left_child_node().unwrap();
-    let right_child = merged_node.right_child_node().unwrap();
+    let left_child = merged_node.left_child().unwrap();
+    let right_child = merged_node.right_child().unwrap();
 
     // Left child should be the internal node with frequency 5
     assert_eq!(left_child.frequency(), 5);
@@ -64,18 +64,18 @@ fn merge_two_non_leaf_nodes() {
     let internal_node_2 = merge_leaf_nodes(leaf_c, leaf_d); // Internal node with frequency 5
 
     // Now merge the two internal nodes
-    let merged_node = merge_internal_nodes(internal_node_1, internal_node_2);
+    let merged_node = merge_nodes(internal_node_1, internal_node_2);
 
     // The merged node should have combined frequency (5 + 5 = 10)
     assert_eq!(merged_node.frequency(), 10);
     // Should be an internal node (no symbol)
     assert!(merged_node.symbol().is_none());
     // Should have two internal nodes as children
-    assert!(merged_node.left_child_node().is_some());
-    assert!(merged_node.right_child_node().is_some());
+    assert!(merged_node.left_child().is_some());
+    assert!(merged_node.right_child().is_some());
 
-    let left_child = merged_node.left_child_node().unwrap();
-    let right_child = merged_node.right_child_node().unwrap();
+    let left_child = merged_node.left_child().unwrap();
+    let right_child = merged_node.right_child().unwrap();
 
     // Both children should be internal nodes with frequency 5
     assert_eq!(left_child.frequency(), 5);
@@ -84,12 +84,12 @@ fn merge_two_non_leaf_nodes() {
     assert!(right_child.symbol().is_none());
 
     // Left child should contain the A and B leaves
-    assert!(left_child.left_child_node().is_some());
-    assert!(left_child.right_child_node().is_some());
+    assert!(left_child.left_child().is_some());
+    assert!(left_child.right_child().is_some());
 
     // Right child should contain the C and D leaves
-    assert!(right_child.left_child_node().is_some());
-    assert!(right_child.right_child_node().is_some());
+    assert!(right_child.left_child().is_some());
+    assert!(right_child.right_child().is_some());
 }
 
 #[test]
@@ -111,7 +111,7 @@ fn parent_node_frequency_equals_sum_of_children_frequencies() {
     let leaf_d = (68u8, 2usize); // 'D' with frequency 2
     let leaf_e = (69u8, 4usize); // 'E' with frequency 4
     let second_internal = merge_leaf_nodes(leaf_d, leaf_e);
-    let final_tree = merge_internal_nodes(complex_tree, second_internal);
+    let final_tree = merge_nodes(complex_tree, second_internal);
 
     assert!(final_tree.validates_frequency_invariant());
 }

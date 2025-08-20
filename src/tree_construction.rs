@@ -39,20 +39,12 @@ impl HuffmanNode {
         self.symbol.is_some()
     }
 
-    pub fn left_child_node(&self) -> Option<&HuffmanNode> {
+    pub fn left_child(&self) -> Option<&HuffmanNode> {
         self.left_child.as_deref()
     }
 
-    pub fn right_child_node(&self) -> Option<&HuffmanNode> {
-        self.right_child.as_deref()
-    }
-
-    pub fn left_child(&self) -> Option<&HuffmanNode> {
-        self.left_child_node()
-    }
-
     pub fn right_child(&self) -> Option<&HuffmanNode> {
-        self.right_child_node()
+        self.right_child.as_deref()
     }
 
     pub fn as_leaf(&self) -> Option<(u8, usize)> {
@@ -70,7 +62,7 @@ impl HuffmanNode {
         }
 
         // For internal nodes, check that frequency equals sum of children
-        match (&self.left_child, &self.right_child) {
+        match (self.left_child(), self.right_child()) {
             (Some(left), Some(right)) => {
                 let children_sum = left.frequency() + right.frequency();
                 self.frequency == children_sum
@@ -96,11 +88,6 @@ pub fn merge_internal_and_leaf_nodes(
     HuffmanNode::new_internal(internal_node, leaf_node)
 }
 
-pub fn merge_internal_nodes(left_node: HuffmanNode, right_node: HuffmanNode) -> HuffmanNode {
-    HuffmanNode::new_internal(left_node, right_node)
-}
-
-// More generic merge function that can handle any combination
 pub fn merge_nodes(left: HuffmanNode, right: HuffmanNode) -> HuffmanNode {
     HuffmanNode::new_internal(left, right)
 }
