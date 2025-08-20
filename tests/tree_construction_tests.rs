@@ -1,4 +1,4 @@
-use tdd_huffman::{merge_leaf_nodes, merge_with_leaf_node, HuffmanNode};
+use tdd_huffman::{merge_leaf_nodes, merge_with_leaf_node};
 
 #[test]
 fn merge_two_leaf_nodes() {
