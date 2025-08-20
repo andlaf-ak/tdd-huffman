@@ -1,4 +1,4 @@
-use tdd_huffman::{merge_internal_nodes, merge_leaf_nodes, merge_with_leaf_node};
+use tdd_huffman::{merge_internal_and_leaf_nodes, merge_internal_nodes, merge_leaf_nodes};
 
 #[test]
 fn merge_two_leaf_nodes() {
@@ -30,7 +30,7 @@ fn merge_leaf_node_with_non_leaf_node() {
 
     // Now merge this internal node with another leaf node
     let leaf_c = (67u8, 4usize); // 'C' with frequency 4
-    let merged_node = merge_with_leaf_node(internal_node, leaf_c);
+    let merged_node = merge_internal_and_leaf_nodes(internal_node, leaf_c);
 
     // The new merged node should have combined frequency (5 + 4 = 9)
     assert_eq!(merged_node.frequency(), 9);

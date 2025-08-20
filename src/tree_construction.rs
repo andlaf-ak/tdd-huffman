@@ -9,7 +9,7 @@ pub struct HuffmanNode {
 }
 
 impl HuffmanNode {
-    fn new_leaf(symbol: u8, frequency: usize) -> Self {
+    pub fn new_leaf(symbol: u8, frequency: usize) -> Self {
         Self {
             frequency,
             symbol: Some(symbol),
@@ -18,7 +18,7 @@ impl HuffmanNode {
         }
     }
 
-    fn new_internal(left_child: HuffmanNode, right_child: HuffmanNode) -> Self {
+    pub fn new_internal(left_child: HuffmanNode, right_child: HuffmanNode) -> Self {
         Self {
             frequency: left_child.frequency + right_child.frequency,
             symbol: None,
@@ -40,16 +40,27 @@ impl HuffmanNode {
     }
 
     pub fn left_child_node(&self) -> Option<&HuffmanNode> {
-        self.left_child.as_ref().map(|boxed| boxed.as_ref())
+        self.left_child.as_deref()
     }
 
     pub fn right_child_node(&self) -> Option<&HuffmanNode> {
-        self.right_child.as_ref().map(|boxed| boxed.as_ref())
+        self.right_child.as_deref()
     }
 
-    // Better API methods
+    pub fn left_child(&self) -> Option<&HuffmanNode> {
+        self.left_child_node()
+    }
+
+    pub fn right_child(&self) -> Option<&HuffmanNode> {
+        self.right_child_node()
+    }
+
     pub fn as_leaf(&self) -> Option<(u8, usize)> {
         self.symbol.map(|s| (s, self.frequency))
+    }
+
+    pub fn children(&self) -> (Option<&HuffmanNode>, Option<&HuffmanNode>) {
+        (self.left_child(), self.right_child())
     }
 }
 
@@ -59,11 +70,16 @@ pub fn merge_leaf_nodes(left: SymbolFrequency, right: SymbolFrequency) -> Huffma
     HuffmanNode::new_internal(left_node, right_node)
 }
 
-pub fn merge_with_leaf_node(internal_node: HuffmanNode, leaf: SymbolFrequency) -> HuffmanNode {
+pub fn merge_internal_and_leaf_nodes(internal_node: HuffmanNode, leaf: SymbolFrequency) -> HuffmanNode {
     let leaf_node = HuffmanNode::new_leaf(leaf.0, leaf.1);
     HuffmanNode::new_internal(internal_node, leaf_node)
 }
 
 pub fn merge_internal_nodes(left_node: HuffmanNode, right_node: HuffmanNode) -> HuffmanNode {
     HuffmanNode::new_internal(left_node, right_node)
+}
+
+// More generic merge function that can handle any combination
+pub fn merge_nodes(left: HuffmanNode, right: HuffmanNode) -> HuffmanNode {
+    HuffmanNode::new_internal(left, right)
 }
