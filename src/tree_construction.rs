@@ -1,48 +1,30 @@
 use crate::node_selection::SymbolFrequency;
 
 #[derive(Debug, PartialEq, Clone)]
-pub enum HuffmanChild {
-    Leaf(SymbolFrequency),
-    Node(Box<HuffmanNode>),
-}
-
-impl HuffmanChild {
-    fn frequency(&self) -> usize {
-        match self {
-            HuffmanChild::Leaf((_, freq)) => *freq,
-            HuffmanChild::Node(node) => node.frequency,
-        }
-    }
-}
-
-#[derive(Debug, PartialEq, Clone)]
 pub struct HuffmanNode {
     frequency: usize,
     symbol: Option<u8>,
-    left_child: Option<HuffmanChild>,
-    right_child: Option<HuffmanChild>,
+    left_child: Option<Box<HuffmanNode>>,
+    right_child: Option<Box<HuffmanNode>>,
 }
 
 impl HuffmanNode {
-    fn new(left_child: HuffmanChild, right_child: HuffmanChild) -> Self {
-        let frequency = left_child.frequency() + right_child.frequency();
+    fn new_leaf(symbol: u8, frequency: usize) -> Self {
         Self {
             frequency,
-            symbol: None,
-            left_child: Some(left_child),
-            right_child: Some(right_child),
+            symbol: Some(symbol),
+            left_child: None,
+            right_child: None,
         }
     }
 
-    fn new_internal(left: SymbolFrequency, right: SymbolFrequency) -> Self {
-        Self::new(HuffmanChild::Leaf(left), HuffmanChild::Leaf(right))
-    }
-
-    fn new_mixed(left_node: HuffmanNode, right_leaf: SymbolFrequency) -> Self {
-        Self::new(
-            HuffmanChild::Node(Box::new(left_node)),
-            HuffmanChild::Leaf(right_leaf),
-        )
+    fn new_internal(left_child: HuffmanNode, right_child: HuffmanNode) -> Self {
+        Self {
+            frequency: left_child.frequency + right_child.frequency,
+            symbol: None,
+            left_child: Some(Box::new(left_child)),
+            right_child: Some(Box::new(right_child)),
+        }
     }
 
     pub fn frequency(&self) -> usize {
@@ -53,39 +35,31 @@ impl HuffmanNode {
         self.symbol
     }
 
-    pub fn left_child(&self) -> Option<&SymbolFrequency> {
-        match &self.left_child {
-            Some(HuffmanChild::Leaf(leaf)) => Some(leaf),
-            _ => None,
-        }
-    }
-
-    pub fn right_child(&self) -> Option<&SymbolFrequency> {
-        match &self.right_child {
-            Some(HuffmanChild::Leaf(leaf)) => Some(leaf),
-            _ => None,
-        }
+    pub fn is_leaf(&self) -> bool {
+        self.symbol.is_some()
     }
 
     pub fn left_child_node(&self) -> Option<&HuffmanNode> {
-        match &self.left_child {
-            Some(HuffmanChild::Node(node)) => Some(node),
-            _ => None,
-        }
+        self.left_child.as_ref().map(|boxed| boxed.as_ref())
     }
 
-    pub fn right_child_leaf(&self) -> Option<&SymbolFrequency> {
-        match &self.right_child {
-            Some(HuffmanChild::Leaf(leaf)) => Some(leaf),
-            _ => None,
-        }
+    pub fn right_child_node(&self) -> Option<&HuffmanNode> {
+        self.right_child.as_ref().map(|boxed| boxed.as_ref())
+    }
+
+    // Better API methods
+    pub fn as_leaf(&self) -> Option<(u8, usize)> {
+        self.symbol.map(|s| (s, self.frequency))
     }
 }
 
 pub fn merge_leaf_nodes(left: SymbolFrequency, right: SymbolFrequency) -> HuffmanNode {
-    HuffmanNode::new_internal(left, right)
+    let left_node = HuffmanNode::new_leaf(left.0, left.1);
+    let right_node = HuffmanNode::new_leaf(right.0, right.1);
+    HuffmanNode::new_internal(left_node, right_node)
 }
 
 pub fn merge_with_leaf_node(internal_node: HuffmanNode, leaf: SymbolFrequency) -> HuffmanNode {
-    HuffmanNode::new_mixed(internal_node, leaf)
+    let leaf_node = HuffmanNode::new_leaf(leaf.0, leaf.1);
+    HuffmanNode::new_internal(internal_node, leaf_node)
 }
