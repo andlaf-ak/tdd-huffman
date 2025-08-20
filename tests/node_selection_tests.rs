@@ -49,3 +49,13 @@ fn select_nodes_with_tie_breaking_when_frequencies_are_equal() {
     assert!(!selected_nodes.contains(&(66u8, 5usize))); // 'B' with frequency 5
     assert!(!selected_nodes.contains(&(68u8, 3usize))); // 'D' with frequency 3 (loses tie to A and C)
 }
+
+#[test]
+fn handle_empty_frequency_map_gracefully() {
+    let input: [(u8, usize); 0] = []; // Empty frequency map
+    let selected_nodes = select_nodes(&input);
+    
+    // Should gracefully return an empty collection when given empty input
+    assert_eq!(selected_nodes.len(), 0);
+    assert!(selected_nodes.is_empty());
+}

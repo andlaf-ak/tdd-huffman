@@ -3,6 +3,10 @@ pub type NodeCollection = Vec<SymbolFrequency>;
 
 /// Selects nodes for Huffman tree construction.
 pub fn select_nodes(frequency_data: &[SymbolFrequency]) -> NodeCollection {
+    if frequency_data.is_empty() {
+        return Vec::new();
+    }
+
     const HUFFMAN_PAIR_COUNT: usize = 2;
 
     if is_single_symbol_case(frequency_data) {
@@ -17,7 +21,7 @@ fn create_initial_nodes(frequency_data: &[SymbolFrequency]) -> NodeCollection {
 }
 
 fn is_single_symbol_case(frequency_data: &[SymbolFrequency]) -> bool {
-    frequency_data.len() <= 1
+    frequency_data.len() == 1
 }
 
 fn select_lowest_frequency_nodes(
