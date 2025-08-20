@@ -6,6 +6,15 @@ pub enum HuffmanChild {
     Node(Box<HuffmanNode>),
 }
 
+impl HuffmanChild {
+    fn frequency(&self) -> usize {
+        match self {
+            HuffmanChild::Leaf((_, freq)) => *freq,
+            HuffmanChild::Node(node) => node.frequency,
+        }
+    }
+}
+
 #[derive(Debug, PartialEq, Clone)]
 pub struct HuffmanNode {
     frequency: usize,
@@ -15,22 +24,25 @@ pub struct HuffmanNode {
 }
 
 impl HuffmanNode {
-    fn new_internal(left: SymbolFrequency, right: SymbolFrequency) -> Self {
+    fn new(left_child: HuffmanChild, right_child: HuffmanChild) -> Self {
+        let frequency = left_child.frequency() + right_child.frequency();
         Self {
-            frequency: left.1 + right.1,
+            frequency,
             symbol: None,
-            left_child: Some(HuffmanChild::Leaf(left)),
-            right_child: Some(HuffmanChild::Leaf(right)),
+            left_child: Some(left_child),
+            right_child: Some(right_child),
         }
     }
 
+    fn new_internal(left: SymbolFrequency, right: SymbolFrequency) -> Self {
+        Self::new(HuffmanChild::Leaf(left), HuffmanChild::Leaf(right))
+    }
+
     fn new_mixed(left_node: HuffmanNode, right_leaf: SymbolFrequency) -> Self {
-        Self {
-            frequency: left_node.frequency + right_leaf.1,
-            symbol: None,
-            left_child: Some(HuffmanChild::Node(Box::new(left_node))),
-            right_child: Some(HuffmanChild::Leaf(right_leaf)),
-        }
+        Self::new(
+            HuffmanChild::Node(Box::new(left_node)),
+            HuffmanChild::Leaf(right_leaf),
+        )
     }
 
     pub fn frequency(&self) -> usize {
