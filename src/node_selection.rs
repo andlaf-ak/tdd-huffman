@@ -35,7 +35,10 @@ fn select_lowest_frequency_nodes(
 trait FrequencySortable: Iterator<Item = SymbolFrequency> + Sized {
     fn sorted_by_frequency(self) -> std::vec::IntoIter<SymbolFrequency> {
         let mut collected: Vec<_> = self.collect();
-        collected.sort_by(|a, b| a.1.cmp(&b.1));
+        collected.sort_by(|a, b| {
+            a.1.cmp(&b.1) // Primary: frequency comparison
+                .then_with(|| a.0.cmp(&b.0)) // Secondary: symbol comparison for tie-breaking
+        });
         collected.into_iter()
     }
 }
