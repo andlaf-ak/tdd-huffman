@@ -62,6 +62,24 @@ impl HuffmanNode {
     pub fn children(&self) -> (Option<&HuffmanNode>, Option<&HuffmanNode>) {
         (self.left_child(), self.right_child())
     }
+
+    pub fn validates_frequency_invariant(&self) -> bool {
+        // Base case: leaf nodes always satisfy the invariant
+        if self.is_leaf() {
+            return true;
+        }
+
+        // For internal nodes, check that frequency equals sum of children
+        match (&self.left_child, &self.right_child) {
+            (Some(left), Some(right)) => {
+                let children_sum = left.frequency() + right.frequency();
+                self.frequency == children_sum
+                    && left.validates_frequency_invariant()
+                    && right.validates_frequency_invariant()
+            }
+            _ => false, // Internal nodes must have both children
+        }
+    }
 }
 
 pub fn merge_leaf_nodes(left: SymbolFrequency, right: SymbolFrequency) -> HuffmanNode {
