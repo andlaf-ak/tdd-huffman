@@ -22,9 +22,14 @@ pub type NodeCollection = Vec<SymbolFrequency>;
 /// assert_eq!(nodes[0], (65u8, 1usize));
 /// ```
 pub fn select_nodes(frequency_data: &[SymbolFrequency]) -> NodeCollection {
-    // Current implementation: convert frequency data to initial node collection
-    // For single symbol case, each frequency pair becomes a leaf node
-    create_initial_nodes(frequency_data)
+    // Handle different cases based on input size
+    if frequency_data.len() <= 1 {
+        // Single symbol case: return all nodes
+        create_initial_nodes(frequency_data)
+    } else {
+        // Multiple symbols case: select the 2 nodes with lowest frequencies
+        select_lowest_frequency_nodes(frequency_data, 2)
+    }
 }
 
 /// Creates initial nodes from frequency data.
@@ -32,4 +37,13 @@ pub fn select_nodes(frequency_data: &[SymbolFrequency]) -> NodeCollection {
 /// Each symbol-frequency pair becomes a potential node for the Huffman tree.
 fn create_initial_nodes(frequency_data: &[SymbolFrequency]) -> NodeCollection {
     frequency_data.to_vec()
+}
+
+/// Selects the specified number of nodes with the lowest frequencies.
+fn select_lowest_frequency_nodes(frequency_data: &[SymbolFrequency], count: usize) -> NodeCollection {
+    let mut sorted_nodes = frequency_data.to_vec();
+    // Sort by frequency (ascending order)
+    sorted_nodes.sort_by(|a, b| a.1.cmp(&b.1));
+    // Take the first 'count' nodes (lowest frequencies)
+    sorted_nodes.into_iter().take(count).collect()
 }
