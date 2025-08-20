@@ -1,4 +1,4 @@
-use tdd_huffman::{merge_leaf_nodes, merge_with_leaf_node, merge_internal_nodes};
+use tdd_huffman::{merge_internal_nodes, merge_leaf_nodes, merge_with_leaf_node};
 
 #[test]
 fn merge_two_leaf_nodes() {
@@ -86,7 +86,7 @@ fn merge_two_non_leaf_nodes() {
     // Left child should contain the A and B leaves
     assert!(left_child.left_child_node().is_some());
     assert!(left_child.right_child_node().is_some());
-    
+
     // Right child should contain the C and D leaves
     assert!(right_child.left_child_node().is_some());
     assert!(right_child.right_child_node().is_some());
