@@ -1,4 +1,4 @@
-.PHONY: build run test format lint
+.PHONY: build run test format lint check
 
 # Default target
 all: test
@@ -22,3 +22,7 @@ format:
 # Lint code
 lint:
 	cargo clippy -- -D warnings
+
+# Run all checks (format, lint, test)
+check: format lint test
+	@echo "✅ All checks passed!"

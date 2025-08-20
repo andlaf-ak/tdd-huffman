@@ -32,9 +32,25 @@ rustfmt --version
 cargo clippy --version
 ```
 
+### Node.js (for Husky Git hooks)
+```bash
+# Install Node.js (if not already installed)
+# Via Homebrew:
+brew install node
+
+# Or download from: https://nodejs.org/
+```
+
 ## Quick Start
 
 ```bash
+# Clone and setup
+git clone <repository-url>
+cd tdd-huffman
+
+# Install dependencies (including Husky hooks)
+npm install
+
 # Build
 make build
 
@@ -49,9 +65,23 @@ make format
 
 # Lint
 make lint
+
+# Run all checks
+make check
 ```
 
 ## Development
+
+### Git Hooks (Husky)
+
+This project uses Husky for Git hooks to ensure code quality:
+
+- **Pre-commit**: Automatically runs `make format` and `make lint`
+- **Pre-push**: Automatically runs `make test`
+
+The hooks are automatically installed when you run `npm install`.
+
+### Manual Commands
 
 ```bash
 # Format code
@@ -59,6 +89,9 @@ make format
 
 # Lint code
 make lint
+
+# Run all checks manually
+make check
 
 # Clean
 cargo clean

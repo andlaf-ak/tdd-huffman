@@ -1,0 +1,8 @@
+#!/usr/bin/env sh
+. "$(dirname -- "$0")/_/husky.sh"
+
+# Run full test suite before pushing
+echo "🧪 Running tests before push..."
+make test
+
+echo "✅ All tests passed! Ready to push."

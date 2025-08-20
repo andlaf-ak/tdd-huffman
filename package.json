@@ -1,0 +1,18 @@
+{
+  "name": "tdd-huffman",
+  "version": "1.0.0",
+  "description": "A Test-Driven Development implementation of Huffman compression in Rust",
+  "scripts": {
+    "prepare": "husky",
+    "format": "make format",
+    "lint": "make lint", 
+    "test": "make test",
+    "check": "make format && make lint && make test"
+  },
+  "devDependencies": {
+    "husky": "^9.0.11"
+  },
+  "keywords": ["rust", "huffman", "compression", "tdd"],
+  "author": "",
+  "license": "ISC"
+}

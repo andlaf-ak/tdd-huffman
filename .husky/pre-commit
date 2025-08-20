@@ -1,0 +1,13 @@
+#!/usr/bin/env sh
+. "$(dirname -- "$0")/_/husky.sh"
+
+# Run format and lint before committing
+echo "🔧 Running pre-commit checks..."
+
+echo "📝 Formatting code..."
+make format
+
+echo "🔍 Linting code..." 
+make lint
+
+echo "✅ Pre-commit checks passed!"
