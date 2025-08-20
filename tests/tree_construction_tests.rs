@@ -91,3 +91,27 @@ fn merge_two_non_leaf_nodes() {
     assert!(right_child.left_child_node().is_some());
     assert!(right_child.right_child_node().is_some());
 }
+
+#[test]
+fn parent_node_frequency_equals_sum_of_children_frequencies() {
+    // Test with simple two-leaf merge
+    let leaf_a = (65u8, 7usize); // 'A' with frequency 7
+    let leaf_b = (66u8, 3usize); // 'B' with frequency 3
+    let simple_tree = merge_leaf_nodes(leaf_a, leaf_b);
+    
+    assert!(simple_tree.validates_frequency_invariant());
+    
+    // Test with more complex tree (internal + leaf)
+    let leaf_c = (67u8, 5usize); // 'C' with frequency 5
+    let complex_tree = merge_internal_and_leaf_nodes(simple_tree, leaf_c);
+    
+    assert!(complex_tree.validates_frequency_invariant());
+    
+    // Test with two internal nodes
+    let leaf_d = (68u8, 2usize); // 'D' with frequency 2
+    let leaf_e = (69u8, 4usize); // 'E' with frequency 4
+    let second_internal = merge_leaf_nodes(leaf_d, leaf_e);
+    let final_tree = merge_internal_nodes(complex_tree, second_internal);
+    
+    assert!(final_tree.validates_frequency_invariant());
+}
