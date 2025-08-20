@@ -40,7 +40,10 @@ fn create_initial_nodes(frequency_data: &[SymbolFrequency]) -> NodeCollection {
 }
 
 /// Selects the specified number of nodes with the lowest frequencies.
-fn select_lowest_frequency_nodes(frequency_data: &[SymbolFrequency], count: usize) -> NodeCollection {
+fn select_lowest_frequency_nodes(
+    frequency_data: &[SymbolFrequency],
+    count: usize,
+) -> NodeCollection {
     let mut sorted_nodes = frequency_data.to_vec();
     // Sort by frequency (ascending order)
     sorted_nodes.sort_by(|a, b| a.1.cmp(&b.1));
