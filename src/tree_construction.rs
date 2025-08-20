@@ -70,7 +70,10 @@ pub fn merge_leaf_nodes(left: SymbolFrequency, right: SymbolFrequency) -> Huffma
     HuffmanNode::new_internal(left_node, right_node)
 }
 
-pub fn merge_internal_and_leaf_nodes(internal_node: HuffmanNode, leaf: SymbolFrequency) -> HuffmanNode {
+pub fn merge_internal_and_leaf_nodes(
+    internal_node: HuffmanNode,
+    leaf: SymbolFrequency,
+) -> HuffmanNode {
     let leaf_node = HuffmanNode::new_leaf(leaf.0, leaf.1);
     HuffmanNode::new_internal(internal_node, leaf_node)
 }
