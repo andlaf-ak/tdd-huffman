@@ -1,4 +1,4 @@
-use tdd_huffman::{merge_internal_and_leaf_nodes, merge_leaf_nodes, merge_nodes};
+use tdd_huffman::{merge_leaf_nodes, merge_nodes, HuffmanNode};
 
 #[test]
 fn merge_two_leaf_nodes() {
@@ -30,7 +30,8 @@ fn merge_leaf_node_with_non_leaf_node() {
 
     // Now merge this internal node with another leaf node
     let leaf_c = (67u8, 4usize); // 'C' with frequency 4
-    let merged_node = merge_internal_and_leaf_nodes(internal_node, leaf_c);
+    let leaf_c_node = HuffmanNode::new_leaf(leaf_c.0, leaf_c.1);
+    let merged_node = merge_nodes(internal_node, leaf_c_node);
 
     // The new merged node should have combined frequency (5 + 4 = 9)
     assert_eq!(merged_node.frequency(), 9);
@@ -103,7 +104,8 @@ fn parent_node_frequency_equals_sum_of_children_frequencies() {
 
     // Test with more complex tree (internal + leaf)
     let leaf_c = (67u8, 5usize); // 'C' with frequency 5
-    let complex_tree = merge_internal_and_leaf_nodes(simple_tree, leaf_c);
+    let leaf_c_node = HuffmanNode::new_leaf(leaf_c.0, leaf_c.1);
+    let complex_tree = merge_nodes(simple_tree, leaf_c_node);
 
     assert!(complex_tree.validates_frequency_invariant());
 

@@ -1,6 +1,6 @@
 use crate::node_selection::SymbolFrequency;
 
-#[derive(Debug, PartialEq, Clone)]
+#[derive(PartialEq)]
 pub struct HuffmanNode {
     frequency: usize,
     symbol: Option<u8>,
@@ -51,10 +51,6 @@ impl HuffmanNode {
         self.symbol.map(|s| (s, self.frequency))
     }
 
-    pub fn children(&self) -> (Option<&HuffmanNode>, Option<&HuffmanNode>) {
-        (self.left_child(), self.right_child())
-    }
-
     pub fn validates_frequency_invariant(&self) -> bool {
         // Base case: leaf nodes always satisfy the invariant
         if self.is_leaf() {
@@ -78,14 +74,6 @@ pub fn merge_leaf_nodes(left: SymbolFrequency, right: SymbolFrequency) -> Huffma
     let left_node = HuffmanNode::new_leaf(left.0, left.1);
     let right_node = HuffmanNode::new_leaf(right.0, right.1);
     HuffmanNode::new_internal(left_node, right_node)
-}
-
-pub fn merge_internal_and_leaf_nodes(
-    internal_node: HuffmanNode,
-    leaf: SymbolFrequency,
-) -> HuffmanNode {
-    let leaf_node = HuffmanNode::new_leaf(leaf.0, leaf.1);
-    HuffmanNode::new_internal(internal_node, leaf_node)
 }
 
 pub fn merge_nodes(left: HuffmanNode, right: HuffmanNode) -> HuffmanNode {
