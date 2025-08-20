@@ -7,4 +7,4 @@ pub mod node_selection;
 
 // Re-export main functions and types for easier access
 pub use frequency_map::{count_byte_frequencies, ByteFrequencyMap};
-pub use node_selection::select_nodes;
+pub use node_selection::{select_nodes, NodeCollection, SymbolFrequency};
