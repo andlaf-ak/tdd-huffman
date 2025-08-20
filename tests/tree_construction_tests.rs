@@ -130,7 +130,7 @@ mod property_tests {
             let leaf_node1 = (symbol1, freq1);
             let leaf_node2 = (symbol2, freq2);
             let merged_tree = merge_leaf_nodes(leaf_node1, leaf_node2);
-            
+
             prop_assert!(validates_frequency_invariant(&merged_tree));
         }
 
@@ -141,19 +141,19 @@ mod property_tests {
         ) {
             prop_assume!(symbols.len() == frequencies.len());
             prop_assume!(symbols.len() >= 3);
-            
+
             // Create leaf nodes
             let mut nodes = Vec::new();
             for (symbol, freq) in symbols.iter().zip(frequencies.iter()) {
                 nodes.push(HuffmanNode::new_leaf(*symbol, *freq));
             }
-            
+
             // Build a tree by progressively merging nodes
             let mut current = nodes.pop().unwrap();
             while let Some(next) = nodes.pop() {
                 current = merge_nodes(current, next);
             }
-            
+
             prop_assert!(validates_frequency_invariant(&current));
         }
     }
