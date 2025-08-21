@@ -148,10 +148,10 @@ fn two_bytes_create_tree_with_one_internal_node_and_two_leaves() {
 #[test]
 fn multiple_bytes_create_proper_binary_tree_structure() {
     let mut frequency_map = ByteFrequencyMap::new();
-    frequency_map.insert(65u8, 5usize);  // 'A' appears 5 times
-    frequency_map.insert(66u8, 2usize);  // 'B' appears 2 times
-    frequency_map.insert(67u8, 1usize);  // 'C' appears 1 time
-    frequency_map.insert(68u8, 3usize);  // 'D' appears 3 times
+    frequency_map.insert(65u8, 5usize); // 'A' appears 5 times
+    frequency_map.insert(66u8, 2usize); // 'B' appears 2 times
+    frequency_map.insert(67u8, 1usize); // 'C' appears 1 time
+    frequency_map.insert(68u8, 3usize); // 'D' appears 3 times
 
     let tree = build_huffman_tree(&frequency_map);
 
