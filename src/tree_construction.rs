@@ -73,13 +73,24 @@ pub fn build_huffman_tree(frequency_map: &ByteFrequencyMap) -> HuffmanNode {
                 .expect("Map has exactly one element");
             HuffmanNode::new_leaf(*symbol, *frequency)
         }
+        2 => {
+            // Handle two symbols case - create two leaf nodes and merge them
+            let entries: Vec<_> = frequency_map.iter().collect();
+            let (symbol1, freq1) = entries[0];
+            let (symbol2, freq2) = entries[1];
+            
+            let leaf1 = HuffmanNode::new_leaf(*symbol1, *freq1);
+            let leaf2 = HuffmanNode::new_leaf(*symbol2, *freq2);
+            
+            HuffmanNode::new_internal(leaf1, leaf2)
+        }
         _ => {
-            // TODO: Implement tree construction for multiple symbols using priority queue
+            // TODO: Implement tree construction for 3+ symbols using priority queue
             // The algorithm should:
             // 1. Convert frequency map to priority queue of nodes
             // 2. Repeatedly merge two lowest-frequency nodes
             // 3. Continue until only one node remains (the root)
-            panic!("Multiple bytes not yet implemented")
+            panic!("More than two bytes not yet implemented")
         }
     }
 }
