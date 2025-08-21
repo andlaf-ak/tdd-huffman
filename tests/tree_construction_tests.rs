@@ -166,7 +166,7 @@ fn multiple_bytes_create_proper_binary_tree_structure() {
     // Verify the tree is correctly built by checking key properties:
     // 1. Multiple bytes should create a tree that's not just a single leaf
     assert!(!tree.is_leaf());
-    
+
     // 2. All leaf nodes should be reachable and contain our original symbols
     let mut found_symbols = std::collections::HashSet::new();
     let mut stack = vec![&tree];
@@ -174,11 +174,18 @@ fn multiple_bytes_create_proper_binary_tree_structure() {
         if let Some(symbol) = node.symbol() {
             found_symbols.insert(symbol);
         } else {
-            if let Some(left) = node.left_child() { stack.push(left); }
-            if let Some(right) = node.right_child() { stack.push(right); }
+            if let Some(left) = node.left_child() {
+                stack.push(left);
+            }
+            if let Some(right) = node.right_child() {
+                stack.push(right);
+            }
         }
     }
-    assert_eq!(found_symbols, [65u8, 66u8, 67u8, 68u8].into_iter().collect());
+    assert_eq!(
+        found_symbols,
+        [65u8, 66u8, 67u8, 68u8].into_iter().collect()
+    );
 }
 
 // Property-based test to ensure frequency invariant holds for any tree construction
