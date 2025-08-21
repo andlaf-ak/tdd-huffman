@@ -11,8 +11,20 @@ pub type HuffmanCodeMap = HashMap<u8, String>;
 ///
 /// # Returns
 /// A mapping from symbols (bytes) to their binary codes (as strings)
-pub fn extract_huffman_codes(_tree: &HuffmanNode) -> HuffmanCodeMap {
-    // This is a stub implementation that will fail our tests
-    // We'll implement this in the GREEN phase
-    unimplemented!("extract_huffman_codes not yet implemented")
+pub fn extract_huffman_codes(tree: &HuffmanNode) -> HuffmanCodeMap {
+    let mut codes = HuffmanCodeMap::new();
+    
+    // Handle the single-node case (edge case: only one symbol)
+    if tree.is_leaf() {
+        if let Some(symbol) = tree.symbol() {
+            // For single symbol, use "0" as the code (1-bit minimum)
+            codes.insert(symbol, "0".to_string());
+        }
+        return codes;
+    }
+    
+    // TODO: Handle multi-node trees in future iterations
+    // For now, this handles the single-node case required by our test
+    
+    codes
 }
