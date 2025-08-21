@@ -183,18 +183,18 @@ mod property_tests {
             symbol_freq_pairs in prop::collection::vec((0u8..255, 1usize..50), 2..8),
         ) {
             prop_assume!(symbol_freq_pairs.len() >= 2);
-            
+
             // Create unique symbols (no duplicates) by using symbol as key
             let mut unique_pairs: std::collections::HashMap<u8, usize> = std::collections::HashMap::new();
             for (symbol, freq) in symbol_freq_pairs {
                 unique_pairs.insert(symbol, freq);
             }
             prop_assume!(unique_pairs.len() >= 2);
-            
+
             // Convert back to vector and sort by frequency (descending)
             let mut sorted_pairs: Vec<(u8, usize)> = unique_pairs.into_iter().collect();
             sorted_pairs.sort_by(|a, b| b.1.cmp(&a.1)); // Sort by frequency descending
-            
+
             // Build input data by repeating each symbol according to its frequency
             let mut input_data = Vec::new();
             for (symbol, freq) in &sorted_pairs {
@@ -202,27 +202,27 @@ mod property_tests {
                     input_data.push(*symbol);
                 }
             }
-            
+
             // Use our established functions
             let frequency_map = count_byte_frequencies(&input_data);
             let tree = build_huffman_tree(&frequency_map);
             let codes = extract_huffman_codes(&tree);
-            
+
             // Verify that symbols with STRICTLY higher frequencies get shorter or equal length codes
             // Note: symbols with equal frequencies can have codes of any relative length
             for i in 0..sorted_pairs.len() {
                 for j in (i+1)..sorted_pairs.len() {
                     let (symbol_more_freq, freq_more) = sorted_pairs[i];
                     let (symbol_less_freq, freq_less) = sorted_pairs[j];
-                    
+
                     // Since we sorted by frequency descending, freq_more >= freq_less
                     prop_assert!(freq_more >= freq_less);
-                    
+
                     // Only check code length relationship if frequencies are strictly different
                     if freq_more > freq_less {
                         let code_more_freq = codes.get(&symbol_more_freq).unwrap();
                         let code_less_freq = codes.get(&symbol_less_freq).unwrap();
-                        
+
                         // Symbol with strictly higher frequency should have shorter or equal length code
                         prop_assert!(
                             code_more_freq.len() <= code_less_freq.len(),
