@@ -81,47 +81,29 @@ pub fn merge_nodes(left: HuffmanNode, right: HuffmanNode) -> HuffmanNode {
 }
 
 pub fn build_huffman_tree(frequency_map: &ByteFrequencyMap) -> HuffmanNode {
-    match frequency_map.len() {
-        0 => panic!("Cannot build Huffman tree from empty frequency map"),
-        1 => {
-            let (symbol, frequency) = frequency_map
-                .iter()
-                .next()
-                .expect("Map has exactly one element");
-            HuffmanNode::new_leaf(*symbol, *frequency)
-        }
-        2 => {
-            // Handle two symbols case - create two leaf nodes and merge them
-            let mut nodes = frequency_map
-                .iter()
-                .map(|(symbol, freq)| HuffmanNode::new_leaf(*symbol, *freq));
-
-            let leaf1 = nodes.next().expect("First element exists");
-            let leaf2 = nodes.next().expect("Second element exists");
-
-            HuffmanNode::new_internal(leaf1, leaf2)
-        }
-        _ => {
-            // Handle 3+ symbols using priority queue (min-heap)
-            let mut heap = BinaryHeap::new();
-
-            // Convert frequency map to priority queue of leaf nodes
-            for (symbol, frequency) in frequency_map.iter() {
-                heap.push(HuffmanNode::new_leaf(*symbol, *frequency));
-            }
-
-            // Repeatedly merge two lowest-frequency nodes until only one remains
-            while heap.len() > 1 {
-                let node1 = heap.pop().expect("Heap has at least 2 elements");
-                let node2 = heap.pop().expect("Heap has at least 1 element");
-
-                // Create internal node and push back to heap
-                let merged = HuffmanNode::new_internal(node1, node2);
-                heap.push(merged);
-            }
-
-            // The remaining node is the root of the Huffman tree
-            heap.pop().expect("Heap should have exactly one element")
-        }
+    if frequency_map.is_empty() {
+        panic!("Cannot build Huffman tree from empty frequency map");
     }
+
+    // Convert frequency map to priority queue of leaf nodes
+    let mut heap: BinaryHeap<HuffmanNode> = frequency_map
+        .iter()
+        .map(|(symbol, frequency)| HuffmanNode::new_leaf(*symbol, *frequency))
+        .collect();
+
+    // Single symbol case: return the leaf node directly
+    if heap.len() == 1 {
+        return heap.pop().expect("Heap has exactly one element");
+    }
+
+    // Multiple symbols case: repeatedly merge until only one node remains
+    while heap.len() > 1 {
+        let node1 = heap.pop().expect("Heap has at least 2 elements");
+        let node2 = heap.pop().expect("Heap has at least 1 element");
+
+        let merged = HuffmanNode::new_internal(node1, node2);
+        heap.push(merged);
+    }
+
+    heap.pop().expect("Heap should have exactly one element")
 }
