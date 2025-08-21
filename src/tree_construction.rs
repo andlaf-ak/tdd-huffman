@@ -67,7 +67,10 @@ pub fn build_huffman_tree(frequency_map: &ByteFrequencyMap) -> HuffmanNode {
     match frequency_map.len() {
         0 => panic!("Cannot build Huffman tree from empty frequency map"),
         1 => {
-            let (symbol, frequency) = frequency_map.iter().next().expect("Map has exactly one element");
+            let (symbol, frequency) = frequency_map
+                .iter()
+                .next()
+                .expect("Map has exactly one element");
             HuffmanNode::new_leaf(*symbol, *frequency)
         }
         _ => {
