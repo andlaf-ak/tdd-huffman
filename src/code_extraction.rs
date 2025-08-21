@@ -5,10 +5,10 @@ use std::collections::HashMap;
 pub type HuffmanCodeMap = HashMap<u8, String>;
 
 /// Extract Huffman codes from a Huffman tree
-/// 
+///
 /// # Arguments
 /// * `tree` - The root of the Huffman tree
-/// 
+///
 /// # Returns
 /// A mapping from symbols (bytes) to their binary codes (as strings)
 pub fn extract_huffman_codes(_tree: &HuffmanNode) -> HuffmanCodeMap {
