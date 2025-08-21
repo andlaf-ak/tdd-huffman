@@ -110,6 +110,41 @@ fn single_byte_creates_tree_with_one_leaf_node() {
     assert_eq!(tree.as_leaf(), Some((65u8, 5usize)));
 }
 
+#[test]
+fn two_bytes_create_tree_with_one_internal_node_and_two_leaves() {
+    let mut frequency_map = ByteFrequencyMap::new();
+    frequency_map.insert(65u8, 3usize); // 'A' appears 3 times
+    frequency_map.insert(66u8, 7usize); // 'B' appears 7 times
+
+    let tree = build_huffman_tree(&frequency_map);
+
+    // Root should have total frequency (3 + 7 = 10)
+    assert_eq!(tree.frequency(), 10);
+
+    // Root should be internal node (no symbol)
+    assert!(tree.symbol().is_none());
+    assert!(tree.left_child().is_some());
+    assert!(tree.right_child().is_some());
+
+    // Tree should have exactly two leaf nodes with the original symbols
+    let left_child = tree.left_child().unwrap();
+    let right_child = tree.right_child().unwrap();
+
+    // Both children should be leaves
+    assert!(left_child.symbol().is_some());
+    assert!(right_child.symbol().is_some());
+
+    // Collect the two leaf symbols (order doesn't matter for this test)
+    let mut leaf_data = vec![
+        left_child.as_leaf().unwrap(),
+        right_child.as_leaf().unwrap()
+    ];
+    leaf_data.sort();
+
+    // Should contain both original symbol/frequency pairs
+    assert_eq!(leaf_data, vec![(65u8, 3usize), (66u8, 7usize)]);
+}
+
 // Property-based test to ensure frequency invariant holds for any tree construction
 #[cfg(test)]
 mod property_tests {
