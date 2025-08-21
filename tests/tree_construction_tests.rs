@@ -137,7 +137,7 @@ fn two_bytes_create_tree_with_one_internal_node_and_two_leaves() {
     // Collect the two leaf symbols (order doesn't matter for this test)
     let mut leaf_data = vec![
         left_child.as_leaf().unwrap(),
-        right_child.as_leaf().unwrap()
+        right_child.as_leaf().unwrap(),
     ];
     leaf_data.sort();
 
