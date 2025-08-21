@@ -65,53 +65,6 @@ fn two_nodes_generate_complementary_codes() {
     );
 }
 
-#[test]
-fn multiple_nodes_generate_prefix_free_codes() {
-    // This test verifies that a tree with multiple symbols generates prefix-free codes
-    // Tree structure:
-    //         root
-    //        /    \
-    //    internal  C(67)
-    //    /     \
-    // A(65)   B(66)
-    // Expected codes: A="00", B="01", C="1" (or similar prefix-free assignment)
-
-    let leaf_a = HuffmanNode::new_leaf(65u8, 1usize); // 'A' appears 1 time
-    let leaf_b = HuffmanNode::new_leaf(66u8, 1usize); // 'B' appears 1 time
-    let internal_left = HuffmanNode::new_internal(leaf_a, leaf_b);
-    let leaf_c = HuffmanNode::new_leaf(67u8, 2usize); // 'C' appears 2 times
-    let tree_root = HuffmanNode::new_internal(internal_left, leaf_c);
-
-    let codes = extract_huffman_codes(&tree_root);
-
-    // Should have exactly three entries
-    assert_eq!(codes.len(), 3);
-
-    // All symbols should be present
-    assert!(codes.contains_key(&65u8)); // 'A'
-    assert!(codes.contains_key(&66u8)); // 'B'
-    assert!(codes.contains_key(&67u8)); // 'C'
-
-    let code_a = codes.get(&65u8).unwrap();
-    let code_b = codes.get(&66u8).unwrap();
-    let code_c = codes.get(&67u8).unwrap();
-
-    // Verify prefix-free property: no code should be a prefix of another
-    let all_codes = vec![code_a, code_b, code_c];
-    for (i, code1) in all_codes.iter().enumerate() {
-        for (j, code2) in all_codes.iter().enumerate() {
-            if i != j {
-                assert!(
-                    !code1.starts_with(*code2) && !code2.starts_with(*code1),
-                    "Codes are not prefix-free: '{}' and '{}' violate prefix-free property",
-                    code1,
-                    code2
-                );
-            }
-        }
-    }
-}
-
 // Property-based tests to ensure prefix-free property holds for any tree construction
 #[cfg(test)]
 mod property_tests {
