@@ -9,9 +9,9 @@ pub type HuffmanCodeMap = HashMap<u8, String>;
 /// For single-symbol trees, assigns "0". For multi-symbol trees, performs tree traversal.
 pub fn extract_huffman_codes(tree: &HuffmanNode) -> HuffmanCodeMap {
     let mut codes = HuffmanCodeMap::new();
-    
+
     if tree.is_leaf() {
-        // Special case: single symbol gets "0" 
+        // Special case: single symbol gets "0"
         if let Some(symbol) = tree.symbol() {
             codes.insert(symbol, "0".to_string());
         }
@@ -19,7 +19,7 @@ pub fn extract_huffman_codes(tree: &HuffmanNode) -> HuffmanCodeMap {
         // General case: traverse tree starting with empty code
         extract_codes_recursive(tree, String::new(), &mut codes);
     }
-    
+
     codes
 }
 
