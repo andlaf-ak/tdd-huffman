@@ -64,12 +64,19 @@ pub fn merge_nodes(left: HuffmanNode, right: HuffmanNode) -> HuffmanNode {
 }
 
 pub fn build_huffman_tree(frequency_map: &ByteFrequencyMap) -> HuffmanNode {
-    // For now, handle only the single byte case (minimal implementation for GREEN phase)
-    if frequency_map.len() == 1 {
-        let (symbol, frequency) = frequency_map.iter().next().unwrap();
-        return HuffmanNode::new_leaf(*symbol, *frequency);
+    match frequency_map.len() {
+        0 => panic!("Cannot build Huffman tree from empty frequency map"),
+        1 => {
+            let (symbol, frequency) = frequency_map.iter().next().expect("Map has exactly one element");
+            HuffmanNode::new_leaf(*symbol, *frequency)
+        }
+        _ => {
+            // TODO: Implement tree construction for multiple symbols using priority queue
+            // The algorithm should:
+            // 1. Convert frequency map to priority queue of nodes
+            // 2. Repeatedly merge two lowest-frequency nodes
+            // 3. Continue until only one node remains (the root)
+            panic!("Multiple bytes not yet implemented")
+        }
     }
-
-    // TODO: Handle multiple bytes case in future iterations
-    panic!("Multiple bytes not yet implemented");
 }
