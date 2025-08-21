@@ -1,4 +1,4 @@
-use tdd_huffman::{merge_leaf_nodes, merge_nodes, HuffmanNode};
+use tdd_huffman::{merge_leaf_nodes, merge_nodes, HuffmanNode, build_huffman_tree, ByteFrequencyMap};
 
 #[test]
 fn merge_two_leaf_nodes() {
@@ -91,6 +91,21 @@ fn merge_two_non_leaf_nodes() {
     // Right child should contain the C and D leaves
     assert!(right_child.left_child().is_some());
     assert!(right_child.right_child().is_some());
+}
+
+#[test]
+fn single_byte_creates_tree_with_one_leaf_node() {
+    let mut frequency_map = ByteFrequencyMap::new();
+    frequency_map.insert(65u8, 5usize); // 'A' appears 5 times
+
+    let tree = build_huffman_tree(&frequency_map);
+
+    // For a single byte, the tree should be just one leaf node
+    assert_eq!(tree.frequency(), 5);
+    assert_eq!(tree.symbol(), Some(65u8));
+    assert!(tree.left_child().is_none());
+    assert!(tree.right_child().is_none());
+    assert_eq!(tree.as_leaf(), Some((65u8, 5usize)));
 }
 
 // Property-based test to ensure frequency invariant holds for any tree construction
