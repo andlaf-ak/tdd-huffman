@@ -145,6 +145,97 @@ fn two_bytes_create_tree_with_one_internal_node_and_two_leaves() {
     assert_eq!(leaf_data, vec![(65u8, 3usize), (66u8, 7usize)]);
 }
 
+#[test]
+fn multiple_bytes_create_proper_binary_tree_structure() {
+    let mut frequency_map = ByteFrequencyMap::new();
+    frequency_map.insert(65u8, 5usize);  // 'A' appears 5 times
+    frequency_map.insert(66u8, 2usize);  // 'B' appears 2 times
+    frequency_map.insert(67u8, 1usize);  // 'C' appears 1 time
+    frequency_map.insert(68u8, 3usize);  // 'D' appears 3 times
+
+    let tree = build_huffman_tree(&frequency_map);
+
+    // Root should have total frequency (5 + 2 + 1 + 3 = 11)
+    assert_eq!(tree.frequency(), 11);
+
+    // Root should be internal node (no symbol)
+    assert!(tree.symbol().is_none());
+    assert!(tree.left_child().is_some());
+    assert!(tree.right_child().is_some());
+
+    // Tree should have proper binary structure
+    // - All internal nodes should have exactly 2 children
+    // - All leaves should have no children
+    // - All original symbols should be preserved as leaves
+    assert!(validate_binary_tree_structure(&tree));
+
+    // All original symbols should be findable as leaves in the tree
+    let leaf_symbols = collect_leaf_symbols(&tree);
+    let mut expected_symbols = vec![65u8, 66u8, 67u8, 68u8];
+    expected_symbols.sort();
+    let mut actual_symbols = leaf_symbols.clone();
+    actual_symbols.sort();
+    assert_eq!(actual_symbols, expected_symbols);
+
+    // Total frequency should be preserved
+    let total_leaf_frequency: usize = collect_leaf_frequencies(&tree).iter().sum();
+    assert_eq!(total_leaf_frequency, 11);
+}
+
+// Helper function to validate proper binary tree structure
+fn validate_binary_tree_structure(node: &HuffmanNode) -> bool {
+    match (node.symbol(), node.left_child(), node.right_child()) {
+        // Leaf nodes: have symbol, no children
+        (Some(_), None, None) => true,
+        // Internal nodes: no symbol, exactly 2 children
+        (None, Some(left), Some(right)) => {
+            validate_binary_tree_structure(left) && validate_binary_tree_structure(right)
+        }
+        // Invalid: any other combination
+        _ => false,
+    }
+}
+
+// Helper function to collect all leaf symbols
+fn collect_leaf_symbols(node: &HuffmanNode) -> Vec<u8> {
+    let mut symbols = Vec::new();
+    collect_leaf_symbols_recursive(node, &mut symbols);
+    symbols
+}
+
+fn collect_leaf_symbols_recursive(node: &HuffmanNode, symbols: &mut Vec<u8>) {
+    if let Some(symbol) = node.symbol() {
+        symbols.push(symbol);
+    } else {
+        if let Some(left) = node.left_child() {
+            collect_leaf_symbols_recursive(left, symbols);
+        }
+        if let Some(right) = node.right_child() {
+            collect_leaf_symbols_recursive(right, symbols);
+        }
+    }
+}
+
+// Helper function to collect all leaf frequencies
+fn collect_leaf_frequencies(node: &HuffmanNode) -> Vec<usize> {
+    let mut frequencies = Vec::new();
+    collect_leaf_frequencies_recursive(node, &mut frequencies);
+    frequencies
+}
+
+fn collect_leaf_frequencies_recursive(node: &HuffmanNode, frequencies: &mut Vec<usize>) {
+    if node.symbol().is_some() {
+        frequencies.push(node.frequency());
+    } else {
+        if let Some(left) = node.left_child() {
+            collect_leaf_frequencies_recursive(left, frequencies);
+        }
+        if let Some(right) = node.right_child() {
+            collect_leaf_frequencies_recursive(right, frequencies);
+        }
+    }
+}
+
 // Property-based test to ensure frequency invariant holds for any tree construction
 #[cfg(test)]
 mod property_tests {
