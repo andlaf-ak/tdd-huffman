@@ -104,22 +104,22 @@ pub fn build_huffman_tree(frequency_map: &ByteFrequencyMap) -> HuffmanNode {
         _ => {
             // Handle 3+ symbols using priority queue (min-heap)
             let mut heap = BinaryHeap::new();
-            
+
             // Convert frequency map to priority queue of leaf nodes
             for (symbol, frequency) in frequency_map.iter() {
                 heap.push(HuffmanNode::new_leaf(*symbol, *frequency));
             }
-            
+
             // Repeatedly merge two lowest-frequency nodes until only one remains
             while heap.len() > 1 {
                 let node1 = heap.pop().expect("Heap has at least 2 elements");
                 let node2 = heap.pop().expect("Heap has at least 1 element");
-                
+
                 // Create internal node and push back to heap
                 let merged = HuffmanNode::new_internal(node1, node2);
                 heap.push(merged);
             }
-            
+
             // The remaining node is the root of the Huffman tree
             heap.pop().expect("Heap should have exactly one element")
         }
