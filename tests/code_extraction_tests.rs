@@ -123,12 +123,12 @@ mod property_tests {
     fn build_input_data(symbol_freq_pairs: Vec<(u8, usize)>) -> Vec<u8> {
         let mut input_data = Vec::new();
         let mut unique_pairs: HashMap<u8, usize> = HashMap::new();
-        
+
         // Deduplicate symbols by using last frequency for each symbol
         for (symbol, freq) in symbol_freq_pairs {
             unique_pairs.insert(symbol, freq);
         }
-        
+
         // Build input data by repeating each symbol according to its frequency
         for (symbol, freq) in unique_pairs {
             for _ in 0..freq {
@@ -157,20 +157,20 @@ mod property_tests {
             symbol_freq_pairs in prop::collection::vec((0u8..255, 1usize..100), 2..6),
         ) {
             prop_assume!(symbol_freq_pairs.len() >= 2);
-            
+
             let input_data = build_input_data(symbol_freq_pairs);
             prop_assume!(input_data.len() >= 2);
-            
+
             let frequency_map = count_byte_frequencies(&input_data);
             prop_assume!(frequency_map.len() >= 2); // Ensure unique symbols
-            
+
             let tree = build_huffman_tree(&frequency_map);
             let codes = extract_huffman_codes(&tree);
 
             // Validate all properties
             prop_assert!(validates_prefix_free_property(&codes));
             prop_assert_eq!(codes.len(), frequency_map.len());
-            
+
             // All codes should be non-empty
             for code in codes.values() {
                 prop_assert!(!code.is_empty());
@@ -182,13 +182,13 @@ mod property_tests {
             symbol_freq_pairs in prop::collection::vec((0u8..255, 1usize..50), 2..8),
         ) {
             prop_assume!(symbol_freq_pairs.len() >= 2);
-            
+
             let input_data = build_input_data(symbol_freq_pairs);
             prop_assume!(input_data.len() >= 2);
-            
+
             let frequency_map = count_byte_frequencies(&input_data);
             prop_assume!(frequency_map.len() >= 2); // Ensure unique symbols
-            
+
             let tree = build_huffman_tree(&frequency_map);
             let codes = extract_huffman_codes(&tree);
 
