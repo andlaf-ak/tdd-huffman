@@ -1,7 +1,9 @@
 use crate::frequency_map::ByteFrequencyMap;
 use crate::node_selection::SymbolFrequency;
+use std::cmp::Ordering;
+use std::collections::BinaryHeap;
 
-#[derive(PartialEq)]
+#[derive(PartialEq, Eq)]
 pub struct HuffmanNode {
     frequency: usize,
     symbol: Option<u8>,
@@ -53,6 +55,21 @@ impl HuffmanNode {
     }
 }
 
+// Implement ordering for HuffmanNode to work with BinaryHeap
+// BinaryHeap is a max-heap, but we want min-heap behavior (lowest frequency first)
+impl Ord for HuffmanNode {
+    fn cmp(&self, other: &Self) -> Ordering {
+        // Reverse the comparison to get min-heap behavior
+        other.frequency.cmp(&self.frequency)
+    }
+}
+
+impl PartialOrd for HuffmanNode {
+    fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
+        Some(self.cmp(other))
+    }
+}
+
 pub fn merge_leaf_nodes(left: SymbolFrequency, right: SymbolFrequency) -> HuffmanNode {
     let left_node = HuffmanNode::new_leaf(left.0, left.1);
     let right_node = HuffmanNode::new_leaf(right.0, right.1);
@@ -85,12 +102,26 @@ pub fn build_huffman_tree(frequency_map: &ByteFrequencyMap) -> HuffmanNode {
             HuffmanNode::new_internal(leaf1, leaf2)
         }
         _ => {
-            // TODO: Implement tree construction for 3+ symbols using priority queue
-            // The algorithm should:
-            // 1. Convert frequency map to priority queue of nodes
-            // 2. Repeatedly merge two lowest-frequency nodes
-            // 3. Continue until only one node remains (the root)
-            panic!("More than two bytes not yet implemented")
+            // Handle 3+ symbols using priority queue (min-heap)
+            let mut heap = BinaryHeap::new();
+            
+            // Convert frequency map to priority queue of leaf nodes
+            for (symbol, frequency) in frequency_map.iter() {
+                heap.push(HuffmanNode::new_leaf(*symbol, *frequency));
+            }
+            
+            // Repeatedly merge two lowest-frequency nodes until only one remains
+            while heap.len() > 1 {
+                let node1 = heap.pop().expect("Heap has at least 2 elements");
+                let node2 = heap.pop().expect("Heap has at least 1 element");
+                
+                // Create internal node and push back to heap
+                let merged = HuffmanNode::new_internal(node1, node2);
+                heap.push(merged);
+            }
+            
+            // The remaining node is the root of the Huffman tree
+            heap.pop().expect("Heap should have exactly one element")
         }
     }
 }
