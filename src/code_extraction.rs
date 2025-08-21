@@ -6,25 +6,19 @@ pub type HuffmanCodeMap = HashMap<u8, String>;
 
 /// Extract Huffman codes from a Huffman tree
 ///
-/// # Arguments
-/// * `tree` - The root of the Huffman tree
-///
-/// # Returns
-/// A mapping from symbols (bytes) to their binary codes (as strings)
+/// For single-symbol trees, assigns "0". Multi-symbol trees are not yet supported.
 pub fn extract_huffman_codes(tree: &HuffmanNode) -> HuffmanCodeMap {
-    let mut codes = HuffmanCodeMap::new();
+    let mut symbol_to_code = HuffmanCodeMap::new();
 
-    // Handle the single-node case (edge case: only one symbol)
     if tree.is_leaf() {
+        // Single symbol case: assign 1-bit code
         if let Some(symbol) = tree.symbol() {
-            // For single symbol, use "0" as the code (1-bit minimum)
-            codes.insert(symbol, "0".to_string());
+            symbol_to_code.insert(symbol, "0".to_string());
         }
-        return codes;
+    } else {
+        // Multi-symbol case: TODO - implement tree traversal
+        // This will require recursive traversal with path tracking
     }
 
-    // TODO: Handle multi-node trees in future iterations
-    // For now, this handles the single-node case required by our test
-
-    codes
+    symbol_to_code
 }
