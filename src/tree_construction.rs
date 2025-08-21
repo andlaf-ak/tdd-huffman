@@ -78,7 +78,7 @@ pub fn build_huffman_tree(frequency_map: &ByteFrequencyMap) -> HuffmanNode {
             let mut nodes = frequency_map
                 .iter()
                 .map(|(symbol, freq)| HuffmanNode::new_leaf(*symbol, *freq));
-            
+
             let leaf1 = nodes.next().expect("First element exists");
             let leaf2 = nodes.next().expect("Second element exists");
 
