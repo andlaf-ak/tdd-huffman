@@ -69,7 +69,7 @@ pub fn build_huffman_tree(frequency_map: &ByteFrequencyMap) -> HuffmanNode {
         let (symbol, frequency) = frequency_map.iter().next().unwrap();
         return HuffmanNode::new_leaf(*symbol, *frequency);
     }
-    
+
     // TODO: Handle multiple bytes case in future iterations
     panic!("Multiple bytes not yet implemented");
 }
