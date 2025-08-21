@@ -78,10 +78,10 @@ pub fn build_huffman_tree(frequency_map: &ByteFrequencyMap) -> HuffmanNode {
             let entries: Vec<_> = frequency_map.iter().collect();
             let (symbol1, freq1) = entries[0];
             let (symbol2, freq2) = entries[1];
-            
+
             let leaf1 = HuffmanNode::new_leaf(*symbol1, *freq1);
             let leaf2 = HuffmanNode::new_leaf(*symbol2, *freq2);
-            
+
             HuffmanNode::new_internal(leaf1, leaf2)
         }
         _ => {
