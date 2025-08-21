@@ -1,4 +1,6 @@
-use tdd_huffman::{merge_leaf_nodes, merge_nodes, HuffmanNode, build_huffman_tree, ByteFrequencyMap};
+use tdd_huffman::{
+    build_huffman_tree, merge_leaf_nodes, merge_nodes, ByteFrequencyMap, HuffmanNode,
+};
 
 #[test]
 fn merge_two_leaf_nodes() {

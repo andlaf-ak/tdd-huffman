@@ -1,3 +1,4 @@
+use crate::frequency_map::ByteFrequencyMap;
 use crate::node_selection::SymbolFrequency;
 
 #[derive(PartialEq)]
@@ -60,4 +61,15 @@ pub fn merge_leaf_nodes(left: SymbolFrequency, right: SymbolFrequency) -> Huffma
 
 pub fn merge_nodes(left: HuffmanNode, right: HuffmanNode) -> HuffmanNode {
     HuffmanNode::new_internal(left, right)
+}
+
+pub fn build_huffman_tree(frequency_map: &ByteFrequencyMap) -> HuffmanNode {
+    // For now, handle only the single byte case (minimal implementation for GREEN phase)
+    if frequency_map.len() == 1 {
+        let (symbol, frequency) = frequency_map.iter().next().unwrap();
+        return HuffmanNode::new_leaf(*symbol, *frequency);
+    }
+    
+    // TODO: Handle multiple bytes case in future iterations
+    panic!("Multiple bytes not yet implemented");
 }
