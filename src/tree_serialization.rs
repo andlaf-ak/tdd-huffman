@@ -19,13 +19,9 @@ fn serialize_leaf(tree: &HuffmanNode) -> String {
 }
 
 fn serialize_internal(tree: &HuffmanNode) -> String {
-    let left_serialized = tree.left_child()
-        .map(serialize_tree)
-        .unwrap_or_default();
-    
-    let right_serialized = tree.right_child()
-        .map(serialize_tree)
-        .unwrap_or_default();
-    
+    let left_serialized = tree.left_child().map(serialize_tree).unwrap_or_default();
+
+    let right_serialized = tree.right_child().map(serialize_tree).unwrap_or_default();
+
     format!("0{left_serialized}{right_serialized}")
 }
