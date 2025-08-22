@@ -35,10 +35,10 @@ fn tree_with_three_nodes_serializes_correctly() {
     let leaf_a = HuffmanNode::new_leaf(65u8, 1); // 'A'
     let leaf_b = HuffmanNode::new_leaf(66u8, 2); // 'B'
     let leaf_c = HuffmanNode::new_leaf(67u8, 3); // 'C'
-    
+
     // Create internal node with B and C
     let internal_bc = HuffmanNode::new_internal(leaf_b, leaf_c);
-    
+
     // Create root with A on left, BC internal node on right
     let tree = HuffmanNode::new_internal(leaf_a, internal_bc);
 
