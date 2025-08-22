@@ -2,7 +2,7 @@ use crate::constants::{BITS_PER_BYTE, MSB_MASK};
 use std::io::Read;
 
 /// A bit-level input stream that reads individual bits from a byte-oriented reader.
-/// 
+///
 /// This struct wraps any type implementing `std::io::Read` and provides bit-level
 /// access to the underlying data. Bits are read from left to right (MSB to LSB)
 /// within each byte, consistent with the OutputBitStream's bit ordering.
@@ -33,10 +33,10 @@ impl<R: Read> InputBitStream<R> {
     }
 
     /// Reads a single bit from the stream.
-    /// 
+    ///
     /// Bits are read from left to right (MSB to LSB) within each byte.
     /// When a byte is exhausted, the next byte is automatically loaded.
-    /// 
+    ///
     /// Returns 0 or 1, or an I/O error if no more data is available.
     pub fn read_bit(&mut self) -> std::io::Result<u8> {
         debug_assert!(
