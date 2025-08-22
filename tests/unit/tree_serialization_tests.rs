@@ -27,3 +27,26 @@ fn tree_with_two_leaves_serializes_correctly() {
     // = "0" + "1" + "01000001" + "1" + "01000010" = "0101000001101000010"
     assert_eq!(result, "0101000001101000010");
 }
+
+#[test]
+fn tree_with_three_nodes_serializes_correctly() {
+    // Arrange: Create a three-node tree structure
+    // Root with A (65) on left, and internal node (B-C) on right
+    let leaf_a = HuffmanNode::new_leaf(65u8, 1); // 'A'
+    let leaf_b = HuffmanNode::new_leaf(66u8, 2); // 'B'
+    let leaf_c = HuffmanNode::new_leaf(67u8, 3); // 'C'
+    
+    // Create internal node with B and C
+    let internal_bc = HuffmanNode::new_internal(leaf_b, leaf_c);
+    
+    // Create root with A on left, BC internal node on right
+    let tree = HuffmanNode::new_internal(leaf_a, internal_bc);
+
+    // Act: Serialize the tree
+    let result = serialize_tree(&tree);
+
+    // Assert: Should be "1{A}" + "0" + "1{B}" + "1{C}" 
+    // = "101000001" + "0" + "101000010" + "101000011"
+    // = "101000001010100001010100001"
+    assert_eq!(result, "1010000010101000010101000011");
+}
