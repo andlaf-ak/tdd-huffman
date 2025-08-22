@@ -50,3 +50,30 @@ fn tree_with_three_nodes_serializes_correctly() {
     // = "01010000010101000010101000011"
     assert_eq!(result, "01010000010101000010101000011");
 }
+
+#[test]
+fn complex_four_node_tree_serializes_correctly() {
+    // Arrange: Create complex tree structure
+    // Root → Left: A, Right: (Node1 → Left: (Node2 → Left: B, Right: C), Right: D)
+    let leaf_a = HuffmanNode::new_leaf(65u8, 1); // 'A'
+    let leaf_b = HuffmanNode::new_leaf(66u8, 2); // 'B'
+    let leaf_c = HuffmanNode::new_leaf(67u8, 3); // 'C'
+    let leaf_d = HuffmanNode::new_leaf(68u8, 4); // 'D'
+    
+    // Create Node2 with B and C
+    let node2 = HuffmanNode::new_internal(leaf_b, leaf_c);
+    
+    // Create Node1 with Node2 and D
+    let node1 = HuffmanNode::new_internal(node2, leaf_d);
+    
+    // Create root with A and Node1
+    let tree = HuffmanNode::new_internal(leaf_a, node1);
+
+    // Act: Serialize the tree
+    let result = serialize_tree(&tree);
+
+    // Assert: Should be "0" + "1{A}" + "0" + "0" + "1{B}" + "1{C}" + "1{D}"
+    // = "0" + "101000001" + "0" + "0" + "101000010" + "101000011" + "101000100"
+    // = "010100000100101000010101000011101000100"
+    assert_eq!(result, "010100000100101000010101000011101000100");
+}
