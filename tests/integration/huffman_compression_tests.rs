@@ -52,7 +52,7 @@ fn compress_multiple_inputs_complete_pipeline_achieves_target_compression() {
     for (test_index, test_case) in test_cases.iter().enumerate() {
         println!("\n📋 Test Case {}: {}", test_index + 1, test_case.name);
         println!("{}", "=".repeat(60));
-        
+
         // Arrange
         let input = test_case.input;
         let expected_original_bits = input.len() * 8;
@@ -62,8 +62,13 @@ fn compress_multiple_inputs_complete_pipeline_achieves_target_compression() {
 
         // Display verbose pipeline output for the test
         println!("=== Huffman Compression Pipeline ===");
-        println!("Input: \"{}{}\"", 
-            if input.len() > 50 { &input[..50] } else { input },
+        println!(
+            "Input: \"{}{}\"",
+            if input.len() > 50 {
+                &input[..50]
+            } else {
+                input
+            },
             if input.len() > 50 { "..." } else { "" }
         );
         println!("Input length: {} characters", input.len());
@@ -76,11 +81,11 @@ fn compress_multiple_inputs_complete_pipeline_achieves_target_compression() {
 
         println!("Step 1: Frequency Analysis");
         println!("  Found {} unique characters", result.frequency_map.len());
-        
+
         // Show top 10 most frequent characters
         let mut freq_sorted: Vec<_> = result.frequency_map.iter().collect();
         freq_sorted.sort_by(|a, b| b.1.cmp(a.1));
-        
+
         println!("  Top frequent characters:");
         for (i, (&byte, &count)) in freq_sorted.iter().take(10).enumerate() {
             let char_display = if byte.is_ascii_graphic() || byte == b' ' {
@@ -88,10 +93,19 @@ fn compress_multiple_inputs_complete_pipeline_achieves_target_compression() {
             } else {
                 format!("\\x{:02x}", byte)
             };
-            println!("    {}. {} (byte {}): {} occurrences", i + 1, char_display, byte, count);
+            println!(
+                "    {}. {} (byte {}): {} occurrences",
+                i + 1,
+                char_display,
+                byte,
+                count
+            );
         }
         if result.frequency_map.len() > 10 {
-            println!("    ... and {} more characters", result.frequency_map.len() - 10);
+            println!(
+                "    ... and {} more characters",
+                result.frequency_map.len() - 10
+            );
         }
         println!();
 
@@ -120,17 +134,29 @@ fn compress_multiple_inputs_complete_pipeline_achieves_target_compression() {
         println!();
 
         println!("Step 4: Tree Serialization");
-        println!("  Serialized tree length: {} bits", result.serialized_tree.len());
-        println!("  Tree preview: {}{}",
-            if result.serialized_tree.len() > 50 { &result.serialized_tree[..50] } else { &result.serialized_tree },
-            if result.serialized_tree.len() > 50 { "..." } else { "" }
+        println!(
+            "  Serialized tree length: {} bits",
+            result.serialized_tree.len()
+        );
+        println!(
+            "  Tree preview: {}{}",
+            if result.serialized_tree.len() > 50 {
+                &result.serialized_tree[..50]
+            } else {
+                &result.serialized_tree
+            },
+            if result.serialized_tree.len() > 50 {
+                "..."
+            } else {
+                ""
+            }
         );
         println!();
 
         let data_encoding_bits = calculate_data_encoding_bits(&result.huffman_codes, input);
         println!("Step 5: Data Encoding");
         println!("  Data encoding bits: {}", data_encoding_bits);
-        
+
         // Show a sample of the encoded sequence for shorter inputs
         if input.len() <= 20 {
             let encoded_sequence: String = input
@@ -189,7 +215,8 @@ fn compress_multiple_inputs_complete_pipeline_achieves_target_compression() {
             assert!(
                 result.huffman_codes.contains_key(&byte),
                 "Test case '{}': Huffman codes should contain byte {}",
-                test_case.name, byte
+                test_case.name,
+                byte
             );
 
             let code = &result.huffman_codes[&byte];
@@ -214,9 +241,10 @@ fn compress_multiple_inputs_complete_pipeline_achieves_target_compression() {
 
         // 5. Verify compression pipeline completed successfully (may not always reduce size)
         // Note: For inputs with many unique characters, Huffman may not achieve compression
-        
+
         // The algorithm should still work correctly even if it doesn't compress
-        println!("Compression effectiveness: {}", 
+        println!(
+            "Compression effectiveness: {}",
             if result.compressed_bits < result.original_bits {
                 "✅ Achieved compression"
             } else {
@@ -230,7 +258,7 @@ fn compress_multiple_inputs_complete_pipeline_achieves_target_compression() {
         } else {
             test_case.expected_total_bits - result.compressed_bits
         };
-        
+
         assert!(
             compression_diff <= test_case.tolerance,
             "Test case '{}': Total compressed size should be around {} bits (±{}), but got {} bits (diff: {})",
@@ -245,7 +273,7 @@ fn compress_multiple_inputs_complete_pipeline_achieves_target_compression() {
             } else {
                 expected_data_bits - data_encoding_bits
             };
-            
+
             assert!(
                 data_diff <= test_case.tolerance,
                 "Test case '{}': Data encoding should be around {} bits (±{}), but got {} bits (diff: {})",
@@ -271,33 +299,45 @@ fn compress_multiple_inputs_complete_pipeline_achieves_target_compression() {
         println!("✅ Test case '{}' passed!", test_case.name);
         println!("📊 Results Summary:");
         println!("   • Original: {} bits", result.original_bits);
-        println!("   • Tree serialization: {} bits", result.serialized_tree.len());
+        println!(
+            "   • Tree serialization: {} bits",
+            result.serialized_tree.len()
+        );
         println!("   • Data encoding: {} bits", data_encoding_bits);
         println!("   • Total compressed: {} bits", result.compressed_bits);
-        println!("   • Expected: {} ± {} bits", test_case.expected_total_bits, test_case.tolerance);
+        println!(
+            "   • Expected: {} ± {} bits",
+            test_case.expected_total_bits, test_case.tolerance
+        );
         println!("   • Ratio: {:.1}%", result.compression_ratio * 100.0);
-        
+
         let space_saved = if result.compressed_bits < result.original_bits {
             result.original_bits - result.compressed_bits
         } else {
-            0  // No space saved if compression increased size
+            0 // No space saved if compression increased size
         };
-        
+
         let savings_percentage = if result.compressed_bits < result.original_bits {
             (1.0 - result.compression_ratio) * 100.0
         } else {
-            0.0  // No savings if compression increased size
+            0.0 // No savings if compression increased size
         };
-        
-        println!("   • Saved: {} bits ({:.1}%)", space_saved, savings_percentage);
-        
+
+        println!(
+            "   • Saved: {} bits ({:.1}%)",
+            space_saved, savings_percentage
+        );
+
         if test_index < test_cases.len() - 1 {
             println!("\n{}", "─".repeat(60));
         }
     }
 
     println!("\n🎉 All parameterized compression tests passed!");
-    println!("Tested {} different input scenarios successfully", test_cases.len());
+    println!(
+        "Tested {} different input scenarios successfully",
+        test_cases.len()
+    );
 }
 
 #[test]
