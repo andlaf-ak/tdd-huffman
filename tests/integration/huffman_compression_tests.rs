@@ -368,7 +368,7 @@ fn compress_all_unique_characters() {
 
     // The algorithm should still produce compressed data (even if larger than original)
     assert!(!result.compressed_data.is_empty());
-    
+
     // For all unique characters, compression should not be effective due to tree overhead
     assert!(
         result.compressed_bits >= result.original_bits,
