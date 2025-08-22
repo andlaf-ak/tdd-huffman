@@ -5,6 +5,7 @@
 pub mod bit_stream;
 pub mod code_extraction;
 pub mod frequency_map;
+pub mod input_bit_stream;
 pub mod node_selection;
 pub mod tree_construction;
 
@@ -12,5 +13,6 @@ pub mod tree_construction;
 pub use bit_stream::BitStream;
 pub use code_extraction::{extract_huffman_codes, HuffmanCodeMap};
 pub use frequency_map::{count_byte_frequencies, ByteFrequencyMap};
+pub use input_bit_stream::InputBitStream;
 pub use node_selection::{select_nodes, NodeCollection, SymbolFrequency};
 pub use tree_construction::{build_huffman_tree, merge_leaf_nodes, merge_nodes, HuffmanNode};
