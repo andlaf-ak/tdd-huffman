@@ -2,18 +2,18 @@
 //!
 //! This library implements Huffman compression using Test-Driven Development.
 
-pub mod bit_stream;
 pub mod code_extraction;
 pub mod constants;
 pub mod frequency_map;
 pub mod input_bit_stream;
 pub mod node_selection;
+pub mod output_bit_stream;
 pub mod tree_construction;
 
 // Re-export main functions and types for easier access
-pub use bit_stream::BitStream;
 pub use code_extraction::{extract_huffman_codes, HuffmanCodeMap};
 pub use frequency_map::{count_byte_frequencies, ByteFrequencyMap};
 pub use input_bit_stream::InputBitStream;
 pub use node_selection::{select_nodes, NodeCollection, SymbolFrequency};
+pub use output_bit_stream::OutputBitStream;
 pub use tree_construction::{build_huffman_tree, merge_leaf_nodes, merge_nodes, HuffmanNode};
