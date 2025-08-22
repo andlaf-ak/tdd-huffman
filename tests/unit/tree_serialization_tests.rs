@@ -14,5 +14,14 @@ fn single_leaf_tree_serializes_to_1_followed_by_symbol() {
 
 // Function that doesn't exist yet - this will cause compilation to fail (RED phase)
 fn serialize_tree(tree: &HuffmanNode) -> String {
-    unimplemented!("Tree serialization not yet implemented")
+    if tree.is_leaf() {
+        // For leaf nodes: "1" + 8-bit symbol representation
+        if let Some(symbol) = tree.symbol() {
+            format!("1{:08b}", symbol)
+        } else {
+            panic!("Leaf node should have a symbol");
+        }
+    } else {
+        unimplemented!("Internal node serialization not yet implemented")
+    }
 }
