@@ -13,7 +13,8 @@ impl BitStream {
         Self { bit_count: 0 }
     }
 
-    pub fn write_bit(&mut self, _bit: u8) {
+    pub fn write_bit(&mut self, bit: u8) {
+        debug_assert!(bit <= 1, "Bit value must be 0 or 1, got: {bit}");
         self.bit_count += 1;
     }
 
