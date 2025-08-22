@@ -21,6 +21,6 @@ fn serialize_leaf(tree: &HuffmanNode) -> String {
 fn serialize_internal(tree: &HuffmanNode) -> String {
     let left = tree.left_child().map(serialize_tree).unwrap_or_default();
     let right = tree.right_child().map(serialize_tree).unwrap_or_default();
-    
+
     format!("0{left}{right}")
 }
