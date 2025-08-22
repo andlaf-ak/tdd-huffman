@@ -1,4 +1,4 @@
-use tdd_huffman::{HuffmanNode, serialize_tree};
+use tdd_huffman::{serialize_tree, HuffmanNode};
 
 #[test]
 fn single_leaf_tree_serializes_to_1_followed_by_symbol() {
