@@ -33,7 +33,11 @@ impl<R: Read> InputBitStream<R> {
         }
 
         // Extract the leftmost bit using MSB mask
-        let bit = if self.current_byte & MSB_MASK != 0 { 1 } else { 0 };
+        let bit = if self.current_byte & MSB_MASK != 0 {
+            1
+        } else {
+            0
+        };
 
         // Shift left to move to next bit position
         self.current_byte <<= 1;
