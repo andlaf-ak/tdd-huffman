@@ -1,5 +1,5 @@
-use crate::constants::{BITS_PER_BYTE, MSB_MASK};
 use std::io::Read;
+use crate::constants::{BITS_PER_BYTE, MSB_MASK};
 
 pub struct InputBitStream<R> {
     reader: R,
@@ -25,12 +25,14 @@ impl<R: Read> InputBitStream<R> {
     }
 
     pub fn read_bit(&mut self) -> std::io::Result<u8> {
+        debug_assert!(self.bits_in_current_byte <= BITS_PER_BYTE, "Invalid bit count state");
+
         // If no bits remaining in current byte, read next byte
         if self.bits_in_current_byte == 0 {
             self.load_next_byte()?;
         }
 
-        // Extract the leftmost bit using MSB mask
+        // Extract the leftmost bit (from left to right)
         let bit = if self.current_byte & MSB_MASK != 0 {
             1
         } else {
