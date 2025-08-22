@@ -30,7 +30,7 @@ fn read_multiple_individual_bits_in_sequence() {
 
 #[test]
 fn read_bits_across_multiple_bytes() {
-    // Create a stream with two bytes: [10110010, 11010000] 
+    // Create a stream with two bytes: [10110010, 11010000]
     let data = vec![178u8, 208u8]; // 178 = 10110010, 208 = 11010000
     let mut input_stream = InputBitStream::new(&data[..]);
 
