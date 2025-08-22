@@ -59,13 +59,13 @@ fn complex_four_node_tree_serializes_correctly() {
     let leaf_b = HuffmanNode::new_leaf(66u8, 2); // 'B'
     let leaf_c = HuffmanNode::new_leaf(67u8, 3); // 'C'
     let leaf_d = HuffmanNode::new_leaf(68u8, 4); // 'D'
-    
+
     // Create Node2 with B and C
     let node2 = HuffmanNode::new_internal(leaf_b, leaf_c);
-    
+
     // Create Node1 with Node2 and D
     let node1 = HuffmanNode::new_internal(node2, leaf_d);
-    
+
     // Create root with A and Node1
     let tree = HuffmanNode::new_internal(leaf_a, node1);
 
