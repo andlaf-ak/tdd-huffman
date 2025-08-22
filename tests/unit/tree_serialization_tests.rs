@@ -11,3 +11,19 @@ fn single_leaf_tree_serializes_to_1_followed_by_symbol() {
     // Assert: Should be "1" + 8-bit representation of 65 = "101000001"
     assert_eq!(result, "101000001");
 }
+
+#[test]
+fn tree_with_two_leaves_serializes_correctly() {
+    // Arrange: Create a tree with root and two leaves
+    // Left leaf: symbol 65 (ASCII 'A'), Right leaf: symbol 66 (ASCII 'B')
+    let left_leaf = HuffmanNode::new_leaf(65u8, 3);
+    let right_leaf = HuffmanNode::new_leaf(66u8, 5);
+    let tree = HuffmanNode::new_internal(left_leaf, right_leaf);
+
+    // Act: Serialize the tree
+    let result = serialize_tree(&tree);
+
+    // Assert: Should be "0" + "1" + left_symbol + "1" + right_symbol
+    // = "0" + "1" + "01000001" + "1" + "01000010" = "0101000001101000010"
+    assert_eq!(result, "0101000001101000010");
+}
