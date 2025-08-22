@@ -32,4 +32,16 @@ impl<W: std::io::Write> BitStream<W> {
 
         Ok(())
     }
+
+    pub fn flush(&mut self) -> std::io::Result<()> {
+        // If we have any pending bits, emit them as a padded byte
+        if self.bits_in_current_byte > 0 {
+            // The remaining bits are already in the correct positions (left-aligned)
+            // Zero bits are automatically in the right positions since we start with 0
+            self.writer.write_all(&[self.current_byte])?;
+            self.current_byte = 0;
+            self.bits_in_current_byte = 0;
+        }
+        Ok(())
+    }
 }
