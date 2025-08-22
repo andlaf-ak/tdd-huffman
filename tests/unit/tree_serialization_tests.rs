@@ -1,4 +1,4 @@
-use tdd_huffman::HuffmanNode;
+use tdd_huffman::{HuffmanNode, serialize_tree};
 
 #[test]
 fn single_leaf_tree_serializes_to_1_followed_by_symbol() {
@@ -10,18 +10,4 @@ fn single_leaf_tree_serializes_to_1_followed_by_symbol() {
 
     // Assert: Should be "1" + 8-bit representation of 65 = "101000001"
     assert_eq!(result, "101000001");
-}
-
-// Function that doesn't exist yet - this will cause compilation to fail (RED phase)
-fn serialize_tree(tree: &HuffmanNode) -> String {
-    if tree.is_leaf() {
-        // For leaf nodes: "1" + 8-bit symbol representation
-        if let Some(symbol) = tree.symbol() {
-            format!("1{:08b}", symbol)
-        } else {
-            panic!("Leaf node should have a symbol");
-        }
-    } else {
-        unimplemented!("Internal node serialization not yet implemented")
-    }
 }
