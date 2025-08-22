@@ -47,10 +47,22 @@ fn compress_string_achieves_target_compression(
     let result = compress_string_with_details(input);
 
     // Verify basic pipeline worked
-    assert!(!result.frequency_map.is_empty(), "Frequency map should not be empty");
-    assert!(!result.huffman_codes.is_empty(), "Huffman codes should be generated");
-    assert!(!result.serialized_tree.is_empty(), "Serialized tree should not be empty");
-    assert!(!result.compressed_data.is_empty(), "Compressed data should not be empty");
+    assert!(
+        !result.frequency_map.is_empty(),
+        "Frequency map should not be empty"
+    );
+    assert!(
+        !result.huffman_codes.is_empty(),
+        "Huffman codes should be generated"
+    );
+    assert!(
+        !result.serialized_tree.is_empty(),
+        "Serialized tree should not be empty"
+    );
+    assert!(
+        !result.compressed_data.is_empty(),
+        "Compressed data should not be empty"
+    );
 
     // Verify all unique characters have codes
     let unique_chars: std::collections::HashSet<u8> = input.bytes().collect();
@@ -68,11 +80,14 @@ fn compress_string_achieves_target_compression(
     } else {
         expected_total_bits - result.compressed_bits
     };
-    
+
     assert!(
         total_diff <= tolerance,
         "Total compressed size should be around {} bits (±{}), but got {} bits (diff: {})",
-        expected_total_bits, tolerance, result.compressed_bits, total_diff
+        expected_total_bits,
+        tolerance,
+        result.compressed_bits,
+        total_diff
     );
 
     // Verify target data encoding
@@ -82,11 +97,14 @@ fn compress_string_achieves_target_compression(
     } else {
         expected_data_encoding_bits - data_encoding_bits
     };
-    
+
     assert!(
         data_diff <= tolerance,
         "Data encoding should be around {} bits (±{}), but got {} bits (diff: {})",
-        expected_data_encoding_bits, tolerance, data_encoding_bits, data_diff
+        expected_data_encoding_bits,
+        tolerance,
+        data_encoding_bits,
+        data_diff
     );
 
     // Print results
@@ -95,7 +113,10 @@ fn compress_string_achieves_target_compression(
     println!("   • Tree: {} bits", result.serialized_tree.len());
     println!("   • Data encoding: {} bits", data_encoding_bits);
     println!("   • Total compressed: {} bits", result.compressed_bits);
-    println!("   • Expected: {} ± {} bits", expected_total_bits, tolerance);
+    println!(
+        "   • Expected: {} ± {} bits",
+        expected_total_bits, tolerance
+    );
     println!("   • Ratio: {:.1}%", result.compression_ratio * 100.0);
 }
 
@@ -107,15 +128,15 @@ fn compress_string_achieves_target_compression(
 #[case("aaaaa")]
 fn compress_single_character_repeated(#[case] input: &str) {
     let result = compress_string_with_details(input);
-    
+
     // Should have exactly 1 unique character
     assert_eq!(result.frequency_map.len(), 1);
     assert_eq!(result.huffman_codes.len(), 1);
-    
+
     // Single character should get a simple code
     let code = result.huffman_codes.values().next().unwrap();
     assert!(!code.is_empty(), "Code should not be empty");
-    
+
     println!("Input: \"{}\" -> Code: \"{}\"", input, code);
 }
 
@@ -125,13 +146,16 @@ fn compress_single_character_repeated(#[case] input: &str) {
 #[case("abcd", 4)]
 #[case("abcde", 5)]
 #[case("abcdef", 6)]
-fn compress_all_unique_characters_various_lengths(#[case] input: &str, #[case] expected_unique: usize) {
+fn compress_all_unique_characters_various_lengths(
+    #[case] input: &str,
+    #[case] expected_unique: usize,
+) {
     let result = compress_string_with_details(input);
-    
+
     // Should have expected number of unique characters
     assert_eq!(result.frequency_map.len(), expected_unique);
     assert_eq!(result.huffman_codes.len(), expected_unique);
-    
+
     // For all unique characters, compression should not be effective due to tree overhead
     assert!(
         result.compressed_bits >= result.original_bits,
@@ -139,8 +163,12 @@ fn compress_all_unique_characters_various_lengths(#[case] input: &str, #[case] e
         result.original_bits,
         result.compressed_bits
     );
-    
-    println!("Input: \"{}\" ({} unique) -> {} bits ({}% ratio)", 
-             input, expected_unique, result.compressed_bits, 
-             (result.compression_ratio * 100.0) as u32);
+
+    println!(
+        "Input: \"{}\" ({} unique) -> {} bits ({}% ratio)",
+        input,
+        expected_unique,
+        result.compressed_bits,
+        (result.compression_ratio * 100.0) as u32
+    );
 }
