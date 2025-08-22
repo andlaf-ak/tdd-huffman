@@ -1,10 +1,10 @@
+use crate::constants::BITS_PER_BYTE;
+
 pub struct BitStream<W> {
     writer: W,
     current_byte: u8,
     bits_in_current_byte: usize,
 }
-
-const BITS_PER_BYTE: usize = 8;
 
 impl<W: std::io::Write> BitStream<W> {
     pub fn new(writer: W) -> Self {

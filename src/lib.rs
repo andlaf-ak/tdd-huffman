@@ -4,6 +4,7 @@
 
 pub mod bit_stream;
 pub mod code_extraction;
+pub mod constants;
 pub mod frequency_map;
 pub mod input_bit_stream;
 pub mod node_selection;
