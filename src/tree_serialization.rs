@@ -14,15 +14,15 @@ pub fn serialize_tree(tree: &HuffmanNode) -> String {
     } else {
         // For internal nodes: "0" + left subtree + right subtree
         let mut result = String::from("0");
-        
+
         if let Some(left_child) = tree.left_child() {
             result.push_str(&serialize_tree(left_child));
         }
-        
+
         if let Some(right_child) = tree.right_child() {
             result.push_str(&serialize_tree(right_child));
         }
-        
+
         result
     }
 }
