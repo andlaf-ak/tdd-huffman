@@ -28,7 +28,7 @@ impl<R: Read> InputBitStream<R> {
 
         // Extract the leftmost bit
         let bit = if self.current_byte & 0x80 != 0 { 1 } else { 0 };
-        
+
         // Shift left to move to next bit position
         self.current_byte <<= 1;
         self.bits_remaining_in_current_byte -= 1;
