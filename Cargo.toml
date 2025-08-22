@@ -6,7 +6,44 @@ authors = ["Your Name <andrea.laforgia@armakuni.com>"]
 description = "A TDD implementation of Huffman Compression"
 repository = "https://github.com/andlaf-ak/tdd-huffman"
 
+[lib]
+doctest = false
+
 [dependencies]
 
 [dev-dependencies]
 proptest = "1.0"
+
+# Unit tests configuration
+[[test]]
+name = "code_extraction_tests"
+path = "tests/unit/code_extraction_tests.rs"
+
+[[test]]
+name = "frequency_map_tests"
+path = "tests/unit/frequency_map_tests.rs"
+
+[[test]]
+name = "input_bit_stream_tests"
+path = "tests/unit/input_bit_stream_tests.rs"
+
+[[test]]
+name = "node_selection_tests"
+path = "tests/unit/node_selection_tests.rs"
+
+[[test]]
+name = "output_bit_stream_tests"
+path = "tests/unit/output_bit_stream_tests.rs"
+
+[[test]]
+name = "tree_construction_tests"
+path = "tests/unit/tree_construction_tests.rs"
+
+# Property-based tests configuration
+[[test]]
+name = "code_extraction_property_tests"
+path = "tests/property/code_extraction_property_tests.rs"
+
+[[test]]
+name = "tree_construction_property_tests"
+path = "tests/property/tree_construction_property_tests.rs"
