@@ -13,6 +13,8 @@ doctest = false
 
 [dev-dependencies]
 proptest = "1.0"
+rstest = "0.18"
+test-case = "3.2"
 
 # Unit tests configuration
 [[test]]
