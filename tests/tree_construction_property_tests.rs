@@ -1,5 +1,5 @@
-use tdd_huffman::*;
 use proptest::prelude::*;
+use tdd_huffman::*;
 
 // Helper function to validate frequency invariant without being part of production code
 fn validates_frequency_invariant(node: &HuffmanNode) -> bool {

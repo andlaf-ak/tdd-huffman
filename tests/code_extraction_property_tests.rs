@@ -1,6 +1,6 @@
-use tdd_huffman::*;
 use proptest::prelude::*;
 use std::collections::HashMap;
+use tdd_huffman::*;
 
 // Helper function to build input data from symbol-frequency pairs
 fn build_input_data(symbol_freq_pairs: Vec<(u8, usize)>) -> Vec<u8> {
