@@ -85,7 +85,13 @@ fn compress_multiple_inputs_complete_pipeline_achieves_target_compression() {
             } else {
                 format!("\\x{:02x}", byte)
             };
-            println!("    {}. {} (byte {}): {} occurrences", i + 1, char_display, byte, count);
+            println!(
+                "    {}. {} (byte {}): {} occurrences",
+                i + 1,
+                char_display,
+                byte,
+                count
+            );
         }
         println!();
 
