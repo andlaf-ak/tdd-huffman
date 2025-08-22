@@ -366,6 +366,14 @@ fn compress_all_unique_characters() {
         assert!(result.huffman_codes.contains_key(&(ch as u8)));
     }
 
-    // May not achieve great compression but should still work
+    // The algorithm should still produce compressed data (even if larger than original)
     assert!(!result.compressed_data.is_empty());
+    
+    // For all unique characters, compression should not be effective due to tree overhead
+    assert!(
+        result.compressed_bits >= result.original_bits,
+        "With all unique characters, compression should not be effective. Expected >= {} bits, got {} bits",
+        result.original_bits,
+        result.compressed_bits
+    );
 }
