@@ -43,6 +43,10 @@ path = "tests/unit/tree_construction_tests.rs"
 name = "tree_serialization_tests"
 path = "tests/unit/tree_serialization_tests.rs"
 
+[[test]]
+name = "compression_tests"
+path = "tests/unit/compression_tests.rs"
+
 # Property-based tests configuration
 [[test]]
 name = "code_extraction_property_tests"
