@@ -3,6 +3,7 @@
 //! This library implements Huffman compression using Test-Driven Development.
 
 pub mod code_extraction;
+pub mod compression;
 pub mod constants;
 pub mod frequency_map;
 pub mod input_bit_stream;
@@ -13,6 +14,7 @@ pub mod tree_serialization;
 
 // Re-export main functions and types for easier access
 pub use code_extraction::{extract_huffman_codes, HuffmanCodeMap};
+pub use compression::{compress_string, compress_string_with_details, CompressionResult};
 pub use frequency_map::{count_byte_frequencies, ByteFrequencyMap};
 pub use input_bit_stream::InputBitStream;
 pub use node_selection::{select_nodes, NodeCollection, SymbolFrequency};
