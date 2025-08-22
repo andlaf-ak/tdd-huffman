@@ -92,17 +92,15 @@ fn read_all_bits_from_multi_byte_input() {
     // Create a stream with 3 bytes: [11110000, 10101010, 00001111]
     const BYTE1: u8 = 240; // 11110000 in binary
     const BYTE2: u8 = 170; // 10101010 in binary
-    const BYTE3: u8 = 15;  // 00001111 in binary
+    const BYTE3: u8 = 15; // 00001111 in binary
     let data = vec![BYTE1, BYTE2, BYTE3];
     let mut input_stream = create_bit_stream_from_bytes(&data);
 
     // Read all 24 bits
     let all_bits = [
         // First byte: 11110000
-        1, 1, 1, 1, 0, 0, 0, 0,
-        // Second byte: 10101010
-        1, 0, 1, 0, 1, 0, 1, 0,
-        // Third byte: 00001111
+        1, 1, 1, 1, 0, 0, 0, 0, // Second byte: 10101010
+        1, 0, 1, 0, 1, 0, 1, 0, // Third byte: 00001111
         0, 0, 0, 0, 1, 1, 1, 1,
     ];
     assert_bits_read_in_sequence(&mut input_stream, &all_bits);
@@ -141,34 +139,34 @@ fn read_bits_in_various_chunk_sizes_from_same_input() {
     const BYTE1: u8 = 240; // 11110000 in binary
     const BYTE2: u8 = 170; // 10101010 in binary
     let data = vec![BYTE1, BYTE2];
-    
+
     // Test reading the same input in different chunk patterns
-    
+
     // Pattern 1: Read 1, then 3, then 4, then 8 bits
     let mut input_stream1 = create_bit_stream_from_bytes(&data);
-    
+
     // Read 1 bit: 1
     assert_eq!(input_stream1.read_bit().unwrap(), 1);
-    
+
     // Read 3 bits: 111
     let three_bits = [1, 1, 1];
     assert_bits_read_in_sequence(&mut input_stream1, &three_bits);
-    
+
     // Read 4 bits: 0000
     let four_bits = [0, 0, 0, 0];
     assert_bits_read_in_sequence(&mut input_stream1, &four_bits);
-    
+
     // Read remaining 8 bits: 10101010
     let eight_bits = [1, 0, 1, 0, 1, 0, 1, 0];
     assert_bits_read_in_sequence(&mut input_stream1, &eight_bits);
-    
+
     // Pattern 2: Read 5, then 11 bits from the same data
     let mut input_stream2 = create_bit_stream_from_bytes(&data);
-    
+
     // Read 5 bits: 11110
     let five_bits = [1, 1, 1, 1, 0];
     assert_bits_read_in_sequence(&mut input_stream2, &five_bits);
-    
+
     // Read remaining 11 bits: 00010101010
     let eleven_bits = [0, 0, 0, 1, 0, 1, 0, 1, 0, 1, 0];
     assert_bits_read_in_sequence(&mut input_stream2, &eleven_bits);
@@ -180,9 +178,9 @@ fn read_from_stream_with_zero_padded_final_byte() {
     // This would produce: [complete_byte, partial_byte_with_padding]
     // Example: 9 bits "101100101" -> [10110010, 10000000]
     //                    ^--8 bits--^  ^1 bit + 7 padding zeros
-    
-    const COMPLETE_BYTE: u8 = 178;  // 10110010 - first 8 bits
-    const PADDED_BYTE: u8 = 128;    // 10000000 - 1 meaningful bit + 7 padding zeros
+
+    const COMPLETE_BYTE: u8 = 178; // 10110010 - first 8 bits
+    const PADDED_BYTE: u8 = 128; // 10000000 - 1 meaningful bit + 7 padding zeros
     let data = vec![COMPLETE_BYTE, PADDED_BYTE];
     let mut input_stream = create_bit_stream_from_bytes(&data);
 
@@ -204,9 +202,9 @@ fn read_from_stream_with_exact_bit_count() {
     // This test demonstrates reading exactly the meaningful bits
     // In a real implementation, we might need to track the actual bit count separately
     // For now, we test reading exactly 9 meaningful bits from our padded stream
-    
-    const COMPLETE_BYTE: u8 = 178;  // 10110010 - first 8 bits
-    const PADDED_BYTE: u8 = 128;    // 10000000 - 1 meaningful bit + 7 padding zeros
+
+    const COMPLETE_BYTE: u8 = 178; // 10110010 - first 8 bits
+    const PADDED_BYTE: u8 = 128; // 10000000 - 1 meaningful bit + 7 padding zeros
     let data = vec![COMPLETE_BYTE, PADDED_BYTE];
     let mut input_stream = create_bit_stream_from_bytes(&data);
 
