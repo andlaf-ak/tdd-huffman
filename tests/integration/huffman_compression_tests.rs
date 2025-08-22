@@ -1,14 +1,8 @@
 use rstest::rstest;
-use std::collections::HashMap;
 use tdd_huffman::compress_string_with_details;
 
-/// Helper function to calculate data encoding bits
-fn calculate_data_encoding_bits(huffman_codes: &HashMap<u8, String>, input: &str) -> usize {
-    input
-        .bytes()
-        .map(|byte| huffman_codes.get(&byte).map_or(0, |code| code.len()))
-        .sum()
-}
+mod test_utils;
+use test_utils::calculate_data_encoding_bits;
 
 #[rstest]
 #[case::abracadabra(

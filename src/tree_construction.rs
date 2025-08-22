@@ -55,11 +55,8 @@ impl HuffmanNode {
     }
 }
 
-// Implement ordering for HuffmanNode to work with BinaryHeap
-// BinaryHeap is a max-heap, but we want min-heap behavior (lowest frequency first)
 impl Ord for HuffmanNode {
     fn cmp(&self, other: &Self) -> Ordering {
-        // Reverse the comparison to get min-heap behavior
         other.frequency.cmp(&self.frequency)
     }
 }
@@ -85,18 +82,15 @@ pub fn build_huffman_tree(frequency_map: &ByteFrequencyMap) -> HuffmanNode {
         panic!("Cannot build Huffman tree from empty frequency map");
     }
 
-    // Convert frequency map to priority queue of leaf nodes
     let mut heap: BinaryHeap<HuffmanNode> = frequency_map
         .iter()
         .map(|(symbol, frequency)| HuffmanNode::new_leaf(*symbol, *frequency))
         .collect();
 
-    // Single symbol case: return the leaf node directly
     if heap.len() == 1 {
         return heap.pop().expect("Heap has exactly one element");
     }
 
-    // Multiple symbols case: repeatedly merge until only one node remains
     while heap.len() > 1 {
         let node1 = heap.pop().expect("Heap has at least 2 elements");
         let node2 = heap.pop().expect("Heap has at least 1 element");
