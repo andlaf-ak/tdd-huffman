@@ -1,5 +1,5 @@
-use std::io::Read;
 use crate::constants::{BITS_PER_BYTE, MSB_MASK};
+use std::io::Read;
 
 pub struct InputBitStream<R> {
     reader: R,
