@@ -45,8 +45,8 @@ fn tree_with_three_nodes_serializes_correctly() {
     // Act: Serialize the tree
     let result = serialize_tree(&tree);
 
-    // Assert: Should be "1{A}" + "0" + "1{B}" + "1{C}"
-    // = "101000001" + "0" + "101000010" + "101000011"
-    // = "101000001010100001010100001"
-    assert_eq!(result, "1010000010101000010101000011");
+    // Assert: Should be "0" + "1{A}" + "0" + "1{B}" + "1{C}"
+    // = "0" + "101000001" + "0" + "101000010" + "101000011"
+    // = "01010000010101000010101000011"
+    assert_eq!(result, "01010000010101000010101000011");
 }
