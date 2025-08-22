@@ -1,10 +1,5 @@
 use crate::tree_construction::HuffmanNode;
 
-/// Serialize a Huffman tree to binary string representation
-///
-/// Uses pre-order traversal:
-/// - Leaf nodes: "1" followed by 8-bit symbol representation  
-/// - Internal nodes: "0" followed by left subtree, then right subtree
 pub fn serialize_tree(tree: &HuffmanNode) -> String {
     match tree.is_leaf() {
         true => serialize_leaf(tree),

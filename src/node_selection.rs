@@ -1,7 +1,6 @@
 pub type SymbolFrequency = (u8, usize);
 pub type NodeCollection = Vec<SymbolFrequency>;
 
-/// Selects nodes for Huffman tree construction.
 pub fn select_nodes(frequency_data: &[SymbolFrequency]) -> NodeCollection {
     if frequency_data.is_empty() {
         return Vec::new();
