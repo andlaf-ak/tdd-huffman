@@ -62,15 +62,7 @@ fn compress_multiple_inputs_complete_pipeline_achieves_target_compression() {
 
         // Display verbose pipeline output for the test
         println!("=== Huffman Compression Pipeline ===");
-        println!(
-            "Input: \"{}{}\"",
-            if input.len() > 50 {
-                &input[..50]
-            } else {
-                input
-            },
-            if input.len() > 50 { "..." } else { "" }
-        );
+        println!("Input: \"{}\"", input);
         println!("Input length: {} characters", input.len());
         println!(
             "Original size: {} bytes ({} bits)",
@@ -87,25 +79,13 @@ fn compress_multiple_inputs_complete_pipeline_achieves_target_compression() {
         freq_sorted.sort_by(|a, b| b.1.cmp(a.1));
 
         println!("  Top frequent characters:");
-        for (i, (&byte, &count)) in freq_sorted.iter().take(10).enumerate() {
+        for (i, (&byte, &count)) in freq_sorted.iter().enumerate() {
             let char_display = if byte.is_ascii_graphic() || byte == b' ' {
                 format!("'{}'", byte as char)
             } else {
                 format!("\\x{:02x}", byte)
             };
-            println!(
-                "    {}. {} (byte {}): {} occurrences",
-                i + 1,
-                char_display,
-                byte,
-                count
-            );
-        }
-        if result.frequency_map.len() > 10 {
-            println!(
-                "    ... and {} more characters",
-                result.frequency_map.len() - 10
-            );
+            println!("    {}. {} (byte {}): {} occurrences", i + 1, char_display, byte, count);
         }
         println!();
 
@@ -117,8 +97,8 @@ fn compress_multiple_inputs_complete_pipeline_achieves_target_compression() {
         println!();
 
         println!("Step 3: Huffman Code Generation");
-        println!("  Sample codes for top characters:");
-        for (i, (&byte, _)) in freq_sorted.iter().take(5).enumerate() {
+        println!("  Codes for all characters:");
+        for (i, (&byte, _)) in freq_sorted.iter().enumerate() {
             if let Some(code) = result.huffman_codes.get(&byte) {
                 let char_display = if byte.is_ascii_graphic() || byte == b' ' {
                     format!("'{}'", byte as char)
@@ -128,9 +108,6 @@ fn compress_multiple_inputs_complete_pipeline_achieves_target_compression() {
                 println!("    {}. {} (byte {}): {}", i + 1, char_display, byte, code);
             }
         }
-        if result.huffman_codes.len() > 5 {
-            println!("    ... and {} more codes", result.huffman_codes.len() - 5);
-        }
         println!();
 
         println!("Step 4: Tree Serialization");
@@ -138,19 +115,7 @@ fn compress_multiple_inputs_complete_pipeline_achieves_target_compression() {
             "  Serialized tree length: {} bits",
             result.serialized_tree.len()
         );
-        println!(
-            "  Tree preview: {}{}",
-            if result.serialized_tree.len() > 50 {
-                &result.serialized_tree[..50]
-            } else {
-                &result.serialized_tree
-            },
-            if result.serialized_tree.len() > 50 {
-                "..."
-            } else {
-                ""
-            }
-        );
+        println!("  Tree preview: {}", result.serialized_tree);
         println!();
 
         let data_encoding_bits = calculate_data_encoding_bits(&result.huffman_codes, input);
