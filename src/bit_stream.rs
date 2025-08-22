@@ -2,6 +2,12 @@ pub struct BitStream {
     bit_count: usize,
 }
 
+impl Default for BitStream {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 impl BitStream {
     pub fn new() -> Self {
         Self { bit_count: 0 }
