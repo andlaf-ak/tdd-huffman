@@ -12,6 +12,17 @@ pub fn serialize_tree(tree: &HuffmanNode) -> String {
             .map(|symbol| format!("1{symbol:08b}"))
             .expect("Leaf node must have a symbol")
     } else {
-        unimplemented!("Internal node serialization not yet implemented")
+        // For internal nodes: "0" + left subtree + right subtree
+        let mut result = String::from("0");
+        
+        if let Some(left_child) = tree.left_child() {
+            result.push_str(&serialize_tree(left_child));
+        }
+        
+        if let Some(right_child) = tree.right_child() {
+            result.push_str(&serialize_tree(right_child));
+        }
+        
+        result
     }
 }
