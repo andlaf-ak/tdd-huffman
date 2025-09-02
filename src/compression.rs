@@ -1,6 +1,8 @@
 use crate::{
-    code_extraction::extract_huffman_codes, frequency_map::count_byte_frequencies,
-    output_bit_stream::OutputBitStream, tree_construction::build_huffman_tree,
+    code_extraction::extract_huffman_codes,
+    frequency_map::count_byte_frequencies,
+    output_bit_stream::OutputBitStream,
+    tree_construction::build_huffman_tree,
     tree_serialization::{serialize_tree, serialize_tree_to_bits},
 };
 use std::collections::HashMap;
@@ -44,8 +46,7 @@ pub fn compress_string_with_details(input: &str) -> CompressionResult {
     let mut output = Vec::new();
     let mut bit_stream = OutputBitStream::new(&mut output);
 
-    serialize_tree_to_bits(&tree, &mut bit_stream)
-        .expect("Failed to serialize tree to bit stream");
+    serialize_tree_to_bits(&tree, &mut bit_stream).expect("Failed to serialize tree to bit stream");
 
     encode_input_stream(input_bytes, &codes, &mut bit_stream)
         .expect("Failed to encode input stream");
