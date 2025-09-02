@@ -4,6 +4,24 @@ use crate::{
     tree_serialization::{serialize_tree, serialize_tree_to_bits},
 };
 use std::collections::HashMap;
+
+/// Encode input bytes using Huffman codes and write to a bit stream
+fn encode_input_stream<W: std::io::Write>(
+    input_bytes: &[u8],
+    codes: &HashMap<u8, String>,
+    bit_stream: &mut OutputBitStream<W>,
+) -> std::io::Result<()> {
+    for &byte in input_bytes {
+        if let Some(code) = codes.get(&byte) {
+            for bit_char in code.chars() {
+                let bit = if bit_char == '1' { 1 } else { 0 };
+                bit_stream.write_bit(bit)?;
+            }
+        }
+    }
+    Ok(())
+}
+
 #[derive(Debug)]
 pub struct CompressionResult {
     pub compressed_data: Vec<u8>,
@@ -31,14 +49,8 @@ pub fn compress_string_with_details(input: &str) -> CompressionResult {
     serialize_tree_to_bits(&tree, &mut bit_stream)
         .expect("Failed to serialize tree to bit stream");
 
-    for &byte in input_bytes {
-        if let Some(code) = codes.get(&byte) {
-            for bit_char in code.chars() {
-                let bit = if bit_char == '1' { 1 } else { 0 };
-                bit_stream.write_bit(bit).expect("Failed to write data bit");
-            }
-        }
-    }
+    encode_input_stream(input_bytes, &codes, &mut bit_stream)
+        .expect("Failed to encode input stream");
 
     bit_stream.flush().expect("Failed to flush bit stream");
 
