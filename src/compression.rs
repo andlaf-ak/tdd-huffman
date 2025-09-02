@@ -1,7 +1,7 @@
 use crate::{
     code_extraction::extract_huffman_codes, frequency_map::count_byte_frequencies,
     output_bit_stream::OutputBitStream, tree_construction::build_huffman_tree,
-    tree_serialization::serialize_tree,
+    tree_serialization::{serialize_tree, serialize_tree_to_bits},
 };
 use std::collections::HashMap;
 #[derive(Debug)]
@@ -27,10 +27,9 @@ pub fn compress_string_with_details(input: &str) -> CompressionResult {
     let mut output = Vec::new();
     let mut bit_stream = OutputBitStream::new(&mut output);
 
-    for bit_char in serialized_tree.chars() {
-        let bit = if bit_char == '1' { 1 } else { 0 };
-        bit_stream.write_bit(bit).expect("Failed to write tree bit");
-    }
+    // Use bit-based tree serialization instead of string parsing
+    serialize_tree_to_bits(&tree, &mut bit_stream)
+        .expect("Failed to serialize tree to bit stream");
 
     for &byte in input_bytes {
         if let Some(code) = codes.get(&byte) {

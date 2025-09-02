@@ -20,4 +20,4 @@ pub use input_bit_stream::InputBitStream;
 pub use node_selection::select_nodes;
 pub use output_bit_stream::OutputBitStream;
 pub use tree_construction::{build_huffman_tree, merge_leaf_nodes, merge_nodes, HuffmanNode};
-pub use tree_serialization::serialize_tree;
+pub use tree_serialization::{serialize_tree, serialize_tree_to_bits};
