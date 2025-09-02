@@ -12,7 +12,6 @@ pub mod output_bit_stream;
 pub mod tree_construction;
 pub mod tree_serialization;
 
-// Re-export main functions and types for easier access
 pub use code_extraction::{extract_huffman_codes, HuffmanCodeMap};
 pub use compression::{compress_string, compress_string_with_details, CompressionResult};
 pub use frequency_map::{count_byte_frequencies, ByteFrequencyMap};

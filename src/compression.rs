@@ -5,7 +5,6 @@ use crate::{
 };
 use std::collections::HashMap;
 
-/// Encode input bytes using Huffman codes and write to a bit stream
 fn encode_input_stream<W: std::io::Write>(
     input_bytes: &[u8],
     codes: &HashMap<u8, String>,
@@ -45,7 +44,6 @@ pub fn compress_string_with_details(input: &str) -> CompressionResult {
     let mut output = Vec::new();
     let mut bit_stream = OutputBitStream::new(&mut output);
 
-    // Use bit-based tree serialization instead of string parsing
     serialize_tree_to_bits(&tree, &mut bit_stream)
         .expect("Failed to serialize tree to bit stream");
 
