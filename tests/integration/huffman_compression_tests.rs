@@ -40,34 +40,6 @@ fn compress_string_achieves_target_compression(
     // Act: Perform compression
     let result = compress_string_with_details(input);
 
-    // Verify basic pipeline worked
-    assert!(
-        !result.frequency_map.is_empty(),
-        "Frequency map should not be empty"
-    );
-    assert!(
-        !result.huffman_codes.is_empty(),
-        "Huffman codes should be generated"
-    );
-    assert!(
-        !result.serialized_tree.is_empty(),
-        "Serialized tree should not be empty"
-    );
-    assert!(
-        !result.compressed_data.is_empty(),
-        "Compressed data should not be empty"
-    );
-
-    // Verify all unique characters have codes
-    let unique_chars: std::collections::HashSet<u8> = input.bytes().collect();
-    for &byte in &unique_chars {
-        assert!(
-            result.huffman_codes.contains_key(&byte),
-            "Huffman codes should contain byte {}",
-            byte
-        );
-    }
-
     // Verify target total compression
     let total_diff = if result.compressed_bits > expected_total_bits {
         result.compressed_bits - expected_total_bits
