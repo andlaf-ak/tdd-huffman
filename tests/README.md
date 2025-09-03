@@ -6,17 +6,22 @@ This project organizes tests into distinct folders for better clarity and mainta
 
 ```
 tests/
-├── unit/                   # Unit tests (40 tests)
+├── unit/                   # Unit tests (48 tests)
 │   ├── code_extraction_tests.rs
+│   ├── decompression_tests.rs
 │   ├── frequency_map_tests.rs
 │   ├── input_bit_stream_tests.rs
 │   ├── node_selection_tests.rs
 │   ├── output_bit_stream_tests.rs
-│   └── tree_construction_tests.rs
-└── property/               # Property-based tests (4 tests)
+│   ├── tree_construction_tests.rs
+│   ├── tree_deserialization_tests.rs
+│   └── tree_serialization_tests.rs
+└── property/               # Property-based tests (28 tests)
     ├── code_extraction_property_tests.rs
+    ├── compression_decompression_round_trip_tests.rs
     ├── tree_construction_property_tests.rs
-    └── code_extraction_tests.proptest-regressions
+    ├── tree_serialization_property_tests.rs
+    └── *.proptest-regressions files
 ```
 
 ## 🧪 Test Types
@@ -24,12 +29,12 @@ tests/
 ### Unit Tests (`tests/unit/`)
 - **Purpose**: Focused, deterministic scenarios
 - **Characteristics**: Fast, specific inputs/outputs, edge cases
-- **Count**: 40 tests across 6 files
+- **Count**: 48 tests across 9 files
 
 ### Property-Based Tests (`tests/property/`)
-- **Purpose**: Comprehensive algorithmic validation
+- **Purpose**: Comprehensive algorithmic validation including round-trip testing
 - **Characteristics**: Generated inputs, invariant testing, broader coverage
-- **Count**: 4 tests across 2 files
+- **Count**: 28 tests across 4 files
 - **Tool**: Uses [PropTest](https://github.com/AltSysrq/proptest)
 
 ## 🚀 Running Tests
