@@ -1,3 +1,8 @@
+#!/usr/bin/env sh
+
+# Exit on any command failure
+set -e
+
 # Run format and lint before committing
 echo "🔧 Running pre-commit checks..."
 

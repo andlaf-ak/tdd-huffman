@@ -17,7 +17,7 @@ pub fn deserialize_tree<R: std::io::Read>(
         INTERNAL_NODE_BIT => deserialize_internal_node(bit_stream),
         _ => Err(std::io::Error::new(
             std::io::ErrorKind::InvalidData,
-            format!("Invalid node type bit: {}", node_type_bit),
+            format!("Invalid node type bit: {node_type_bit}"),
         )),
     }
 }

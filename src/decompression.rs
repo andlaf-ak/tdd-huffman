@@ -82,7 +82,7 @@ fn decode_next_symbol<R: Read>(
             _ => {
                 return Err(std::io::Error::new(
                     std::io::ErrorKind::InvalidData,
-                    format!("Invalid bit value: {}", bit),
+                    format!("Invalid bit value: {bit}"),
                 ))
             }
         };
