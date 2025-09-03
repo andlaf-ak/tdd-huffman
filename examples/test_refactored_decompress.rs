@@ -7,7 +7,9 @@ fn main() {
     println!("Original input: {}", input);
 
     // Compress the input
-    let compressed_data = compress_string(input);
+    let mut compressed_data = Vec::new();
+    compress(Cursor::new(input.as_bytes()), &mut compressed_data)
+        .expect("Compression should succeed");
     println!("Compressed data length: {} bytes", compressed_data.len());
 
     // Decompress using the new decompress function

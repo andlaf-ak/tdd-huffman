@@ -6,6 +6,7 @@ use crate::{
     tree_serialization::{serialize_tree, serialize_tree_to_bits},
 };
 use std::collections::HashMap;
+use std::io::{Read, Write};
 
 fn encode_input_stream<W: std::io::Write>(
     input_bytes: &[u8],
@@ -23,9 +24,41 @@ fn encode_input_stream<W: std::io::Write>(
     Ok(())
 }
 
+pub fn compress<R: Read, W: Write>(
+    mut input_reader: R,
+    output_stream: &mut W,
+) -> std::io::Result<()> {
+    // Read all input data into memory first to analyze frequencies
+    let mut input_bytes = Vec::new();
+    input_reader.read_to_end(&mut input_bytes)?;
+
+    // Build Huffman tree from input data
+    let frequency_map = count_byte_frequencies(&input_bytes);
+    let tree = build_huffman_tree(&frequency_map);
+    let codes = extract_huffman_codes(&tree);
+
+    // Write original length as header
+    let original_length = input_bytes.len() as u32;
+    output_stream.write_all(&original_length.to_le_bytes())?;
+    
+    // Initialize bit stream for compressed output
+    let mut bit_stream = OutputBitStream::new(output_stream);
+
+    // Serialize tree structure to bit stream
+    serialize_tree_to_bits(&tree, &mut bit_stream)?;
+
+    // Encode input data using Huffman codes
+    encode_input_stream(&input_bytes, &codes, &mut bit_stream)?;
+
+    // Ensure all bits are written
+    bit_stream.flush()?;
+
+    Ok(())
+}
+
+/// Statistics about compression operation
 #[derive(Debug)]
-pub struct CompressionResult {
-    pub compressed_data: Vec<u8>,
+pub struct CompressionStats {
     pub original_bits: usize,
     pub compressed_bits: usize,
     pub compression_ratio: f64,
@@ -34,42 +67,90 @@ pub struct CompressionResult {
     pub serialized_tree: String,
 }
 
-pub fn compress_string_with_details(input: &str) -> CompressionResult {
-    let input_bytes = input.as_bytes();
+/// Compress with detailed statistics - mainly for testing purposes
+pub fn compress_with_stats<R: Read, W: Write>(
+    mut input_reader: R,
+    output_stream: &mut W,
+) -> std::io::Result<CompressionStats> {
+    // Read all input data into memory first to analyze frequencies
+    let mut input_bytes = Vec::new();
+    input_reader.read_to_end(&mut input_bytes)?;
+    
     let original_bits = input_bytes.len() * 8;
 
-    let frequency_map = count_byte_frequencies(input_bytes);
+    // Build Huffman tree from input data
+    let frequency_map = count_byte_frequencies(&input_bytes);
     let tree = build_huffman_tree(&frequency_map);
     let codes = extract_huffman_codes(&tree);
     let serialized_tree = serialize_tree(&tree);
 
-    let mut output = Vec::new();
+    // Track bytes written for statistics
+    let mut bytes_written = 0;
 
+    // Write original length as header
     let original_length = input_bytes.len() as u32;
-    output.extend_from_slice(&original_length.to_le_bytes());
-    let mut bit_stream = OutputBitStream::new(&mut output);
+    let header_bytes = original_length.to_le_bytes();
+    output_stream.write_all(&header_bytes)?;
+    bytes_written += header_bytes.len();
+    
+    // Use a counting wrapper to track compressed output
+    let mut counting_writer = CountingWriter::new(output_stream);
+    let mut bit_stream = OutputBitStream::new(&mut counting_writer);
 
-    serialize_tree_to_bits(&tree, &mut bit_stream).expect("Failed to serialize tree to bit stream");
+    // Serialize tree structure to bit stream
+    serialize_tree_to_bits(&tree, &mut bit_stream)?;
 
-    encode_input_stream(input_bytes, &codes, &mut bit_stream)
-        .expect("Failed to encode input stream");
+    // Encode input data using Huffman codes
+    encode_input_stream(&input_bytes, &codes, &mut bit_stream)?;
 
-    bit_stream.flush().expect("Failed to flush bit stream");
+    // Ensure all bits are written
+    bit_stream.flush()?;
 
-    let compressed_bits = output.len() * 8;
-    let compression_ratio = compressed_bits as f64 / original_bits as f64;
+    // Calculate total compressed bits
+    let compressed_bits = (bytes_written + counting_writer.bytes_written()) * 8;
+    let compression_ratio = if original_bits > 0 {
+        compressed_bits as f64 / original_bits as f64
+    } else {
+        0.0
+    };
 
-    CompressionResult {
-        compressed_data: output,
+    Ok(CompressionStats {
         original_bits,
         compressed_bits,
         compression_ratio,
         frequency_map,
         huffman_codes: codes,
         serialized_tree,
+    })
+}
+
+/// A writer wrapper that tracks the number of bytes written
+struct CountingWriter<W> {
+    writer: W,
+    bytes_written: usize,
+}
+
+impl<W: Write> CountingWriter<W> {
+    fn new(writer: W) -> Self {
+        Self {
+            writer,
+            bytes_written: 0,
+        }
+    }
+
+    fn bytes_written(&self) -> usize {
+        self.bytes_written
     }
 }
 
-pub fn compress_string(input: &str) -> Vec<u8> {
-    compress_string_with_details(input).compressed_data
+impl<W: Write> Write for CountingWriter<W> {
+    fn write(&mut self, buf: &[u8]) -> std::io::Result<usize> {
+        let bytes_written = self.writer.write(buf)?;
+        self.bytes_written += bytes_written;
+        Ok(bytes_written)
+    }
+
+    fn flush(&mut self) -> std::io::Result<()> {
+        self.writer.flush()
+    }
 }

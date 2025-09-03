@@ -1,5 +1,6 @@
 use rstest::rstest;
-use tdd_huffman::compress_string_with_details;
+use tdd_huffman::compress_with_stats;
+use std::io::Cursor;
 
 mod test_utils;
 use test_utils::{assert_original_length_in_header, calculate_data_encoding_bits};
@@ -38,10 +39,12 @@ fn compress_string_achieves_target_compression(
     println!("Input length: {} characters", input.len());
 
     // Act: Perform compression
-    let result = compress_string_with_details(input);
+    let mut compressed_data = Vec::new();
+    let result = compress_with_stats(Cursor::new(input.as_bytes()), &mut compressed_data)
+        .expect("Compression should succeed");
 
     // Verify that compressed data contains original length in header
-    assert_original_length_in_header(&result.compressed_data, input.len());
+    assert_original_length_in_header(&compressed_data, input.len());
 
     // Verify target total compression
     let total_diff = if result.compressed_bits > expected_total_bits {
@@ -100,10 +103,12 @@ fn compress_single_character_repeated(#[case] input: &str) {
     println!("Input length: {} characters", input.len());
 
     // Act: Perform compression
-    let result = compress_string_with_details(input);
+    let mut compressed_data = Vec::new();
+    let result = compress_with_stats(Cursor::new(input.as_bytes()), &mut compressed_data)
+        .expect("Compression should succeed");
 
     // Verify that compressed data contains original length in header
-    assert_original_length_in_header(&result.compressed_data, input.len());
+    assert_original_length_in_header(&compressed_data, input.len());
 
     // Should have exactly 1 unique character
     assert_eq!(result.frequency_map.len(), 1);
@@ -141,10 +146,12 @@ fn compress_all_unique_characters_various_lengths(
     println!("Expected unique characters: {}", expected_unique);
 
     // Act: Perform compression
-    let result = compress_string_with_details(input);
+    let mut compressed_data = Vec::new();
+    let result = compress_with_stats(Cursor::new(input.as_bytes()), &mut compressed_data)
+        .expect("Compression should succeed");
 
     // Verify that compressed data contains original length in header
-    assert_original_length_in_header(&result.compressed_data, input.len());
+    assert_original_length_in_header(&compressed_data, input.len());
 
     // Should have expected number of unique characters
     assert_eq!(result.frequency_map.len(), expected_unique);

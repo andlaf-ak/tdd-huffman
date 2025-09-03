@@ -1,7 +1,7 @@
 use proptest::prelude::*;
 use rstest::rstest;
 use std::io::Cursor;
-use tdd_huffman::{compress_string, decompress};
+use tdd_huffman::{compress, decompress};
 
 const LOREM_IPSUM: &str = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt. Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit, sed quia non numquam eius modi tempora incidunt ut labore et dolore magnam aliquam quaerat voluptatem. Ut enim ad minima veniam, quis nostrum exercitationem ullam corporis suscipit laboriosam, nisi ut aliquid ex ea commodi consequatur.";
 
@@ -44,7 +44,9 @@ fn test_compression_decompression_round_trip(#[case] input: &str) {
     }
 
     // Compress the input
-    let compressed_data = compress_string(input);
+    let mut compressed_data = Vec::new();
+    compress(Cursor::new(input.as_bytes()), &mut compressed_data)
+        .expect("Compression should succeed");
     println!("Compressed size: {} bytes", compressed_data.len());
 
     // Decompress the compressed data
@@ -81,7 +83,9 @@ proptest! {
                 if input.len() > 30 { format!("{}...", &input[..27]) } else { input.clone() });
 
         // Compress the input
-        let compressed_data = compress_string(&input);
+        let mut compressed_data = Vec::new();
+        compress(Cursor::new(input.as_bytes()), &mut compressed_data)
+            .expect("Compression should succeed");
 
         // Decompress the compressed data
         let cursor = Cursor::new(compressed_data);
@@ -108,7 +112,9 @@ proptest! {
                 ch, count, if input.len() > 30 { format!("{}...", &input[..27]) } else { input.clone() });
 
         // Compress the input
-        let compressed_data = compress_string(&input);
+        let mut compressed_data = Vec::new();
+        compress(Cursor::new(input.as_bytes()), &mut compressed_data)
+            .expect("Compression should succeed");
 
         // Decompress the compressed data
         let cursor = Cursor::new(compressed_data);
@@ -136,7 +142,9 @@ proptest! {
                 input_string.len(), if input_string.len() > 30 { format!("{}...", &input_string[..27]) } else { input_string.clone() });
 
         // Compress the input
-        let compressed_data = compress_string(&input_string);
+        let mut compressed_data = Vec::new();
+        compress(Cursor::new(input_string.as_bytes()), &mut compressed_data)
+            .expect("Compression should succeed");
 
         // Decompress the compressed data
         let cursor = Cursor::new(compressed_data);

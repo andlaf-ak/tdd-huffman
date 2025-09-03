@@ -1,11 +1,16 @@
-use tdd_huffman::compress_string_with_details;
+use tdd_huffman::compress;
+use std::io::Cursor;
 
 fn main() {
     let test_string = "hello world";
-    let result = compress_string_with_details(test_string);
+    let mut compressed_data = Vec::new();
+    
+    compress(Cursor::new(test_string.as_bytes()), &mut compressed_data)
+        .expect("Compression should succeed");
 
     println!("Original: '{}'", test_string);
-    println!("Compressed: {} bytes", result.compressed_data.len());
-    println!("Compression ratio: {:.3}", result.compression_ratio);
-    println!("Huffman codes: {:?}", result.huffman_codes);
+    println!("Compressed: {} bytes", compressed_data.len());
+    println!("Original size: {} bytes", test_string.len());
+    let compression_ratio = compressed_data.len() as f64 / test_string.len() as f64;
+    println!("Compression ratio: {:.3}", compression_ratio);
 }
