@@ -45,6 +45,10 @@ path = "tests/unit/tree_construction_tests.rs"
 name = "tree_serialization_tests"
 path = "tests/unit/tree_serialization_tests.rs"
 
+[[test]]
+name = "tree_deserialization_tests"
+path = "tests/unit/tree_deserialization_tests.rs"
+
 # Integration tests configuration
 [[test]]
 name = "huffman_compression_tests"
