@@ -1,24 +1,34 @@
 use std::io::Cursor;
-use tdd_huffman::{decompress, HuffmanNode, InputBitStream};
+use tdd_huffman::{decompress, HuffmanNode, OutputBitStream, serialize_tree_to_bits};
 
 #[test]
 fn decompresses_ten_zeros_to_ten_as_with_single_node_tree() {
     // Arrange: Tree with single node for 'A' 
     let tree = HuffmanNode::new_leaf(b'A', 10);
     
-    // Bit stream with 10 zeros (representing 10 'A's in single-node tree)
-    let compressed_data = vec![0x00, 0x00]; // 10 zero bits: 0000000000 + 6 padding bits
+    // Create properly formatted compressed data with header and serialized tree
+    let mut compressed_data = Vec::new();
+    
+    // Write the original data length as a 4-byte little-endian header
+    let original_length = 10u32;
+    compressed_data.extend_from_slice(&original_length.to_le_bytes());
+    
+    // Serialize the tree to the compressed data
+    let mut bit_stream = OutputBitStream::new(&mut compressed_data);
+    serialize_tree_to_bits(&tree, &mut bit_stream).expect("Tree serialization should succeed");
+    
+    // For single-node tree, no additional bits are needed for the data itself
+    // (the tree structure alone determines the output)
+    bit_stream.flush().expect("Should flush successfully");
+    
+    // Create input reader from compressed data
     let cursor = Cursor::new(compressed_data);
-    let mut bit_stream = InputBitStream::new(cursor);
     
     // Output stream to write decompressed data
     let mut output = Vec::new();
     
-    // Original input was 10 bytes long
-    let original_length = 10;
-    
     // Act
-    decompress(&tree, &mut bit_stream, &mut output, original_length)
+    decompress(cursor, &mut output)
         .expect("Decompression should succeed");
     
     // Assert: Should produce 10 A's
@@ -33,19 +43,43 @@ fn decompresses_bits_to_ab_sequence_with_two_node_tree() {
     let right_leaf = HuffmanNode::new_leaf(b'B', 1);
     let tree = HuffmanNode::new_internal(left_leaf, right_leaf);
     
-    // Bit stream "0110001011101000" = 0x62E8 (16 bits)
-    let compressed_data = vec![0x62, 0xE8]; // 01100010 11101000
+    // Create properly formatted compressed data with header and serialized tree
+    let mut compressed_data = Vec::new();
+    
+    // Write the original data length as a 4-byte little-endian header
+    let original_length = 13u32;
+    compressed_data.extend_from_slice(&original_length.to_le_bytes());
+    
+    // Serialize the tree to the compressed data
+    let mut bit_stream = OutputBitStream::new(&mut compressed_data);
+    serialize_tree_to_bits(&tree, &mut bit_stream).expect("Tree serialization should succeed");
+    
+    // Add the encoded data: "0110001011101000" = 0x62E8 (16 bits)
+    // This represents "ABBAAABABBBAB" with A=0, B=1
+    bit_stream.write_bit(0).unwrap(); // A
+    bit_stream.write_bit(1).unwrap(); // B
+    bit_stream.write_bit(1).unwrap(); // B
+    bit_stream.write_bit(0).unwrap(); // A
+    bit_stream.write_bit(0).unwrap(); // A
+    bit_stream.write_bit(0).unwrap(); // A
+    bit_stream.write_bit(1).unwrap(); // B
+    bit_stream.write_bit(0).unwrap(); // A
+    bit_stream.write_bit(1).unwrap(); // B
+    bit_stream.write_bit(1).unwrap(); // B
+    bit_stream.write_bit(1).unwrap(); // B
+    bit_stream.write_bit(0).unwrap(); // A
+    bit_stream.write_bit(1).unwrap(); // B
+    
+    bit_stream.flush().expect("Should flush successfully");
+    
+    // Create input reader from compressed data
     let cursor = Cursor::new(compressed_data);
-    let mut bit_stream = InputBitStream::new(cursor);
     
     // Output stream to write decompressed data
     let mut output = Vec::new();
     
-    // Original input was 13 bytes long
-    let original_length = 13;
-    
     // Act
-    decompress(&tree, &mut bit_stream, &mut output, original_length)
+    decompress(cursor, &mut output)
         .expect("Decompression should succeed");
     
     // Assert: Should produce "ABBAAABABBBAB"
