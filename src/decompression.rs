@@ -10,22 +10,17 @@ pub fn decompress<R: Read, W: Write>(
     input_reader: R,
     output_stream: &mut W,
 ) -> std::io::Result<()> {
-    // Read the original data length from the 4-byte header
     let mut reader = input_reader;
     let mut header_bytes = [0u8; 4];
     reader.read_exact(&mut header_bytes)?;
     let original_length = u32::from_le_bytes(header_bytes) as usize;
 
-    // Create bit stream for the remaining data
     let mut bit_stream = InputBitStream::new(reader);
 
-    // Deserialize the tree from the bit stream
     let tree = deserialize_tree(&mut bit_stream)?;
 
-    // Decode the compressed data
     decode_compressed_data(&tree, &mut bit_stream, output_stream, original_length)
 }
-
 pub fn decode_compressed_data<R: Read, W: Write>(
     tree: &HuffmanNode,
     bit_stream: &mut InputBitStream<R>,

@@ -9,7 +9,6 @@ const INTERNAL_NODE_BIT: u8 = 0;
 pub fn deserialize_tree<R: std::io::Read>(
     bit_stream: &mut InputBitStream<R>,
 ) -> std::io::Result<HuffmanNode> {
-    // Read first bit to determine if this is a leaf or internal node
     let node_type_bit = bit_stream.read_bit()?;
 
     match node_type_bit {
