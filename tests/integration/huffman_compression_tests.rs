@@ -2,6 +2,7 @@ use rstest::rstest;
 use std::io::Cursor;
 use tdd_huffman::{compress, decompress};
 
+#[path = "test_utils.rs"]
 mod test_utils;
 use test_utils::assert_original_length_in_header;
 
