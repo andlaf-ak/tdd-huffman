@@ -22,6 +22,10 @@ name = "code_extraction_tests"
 path = "tests/unit/code_extraction_tests.rs"
 
 [[test]]
+name = "decompression_tests"
+path = "tests/unit/decompression_tests.rs"
+
+[[test]]
 name = "frequency_map_tests"
 path = "tests/unit/frequency_map_tests.rs"
 
