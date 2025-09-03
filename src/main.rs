@@ -5,41 +5,13 @@ use std::path::Path;
 use tdd_huffman::{compress, decompress};
 
 fn main() -> io::Result<()> {
-    let matches = Command::new("huffman")
-        .version("0.1.0")
-        .about("Huffman compression utility")
-        .arg(
-            Arg::new("compress")
-                .short('c')
-                .long("compress")
-                .help("Compress the input file")
-                .action(clap::ArgAction::SetTrue)
-                .conflicts_with("decompress"),
-        )
-        .arg(
-            Arg::new("decompress")
-                .short('d')
-                .long("decompress")
-                .help("Decompress the input file")
-                .action(clap::ArgAction::SetTrue)
-                .conflicts_with("compress"),
-        )
-        .arg(
-            Arg::new("output")
-                .short('o')
-                .long("output")
-                .value_name("FILE")
-                .help("Output file path")
-                .required(false),
-        )
-        .arg(
-            Arg::new("input")
-                .value_name("INPUT")
-                .help("Input file to process")
-                .required(false)
-                .index(1),
-        )
-        .get_matches();
+    let cmd = build_cli();
+    let matches = match cmd.try_get_matches() {
+        Ok(matches) => matches,
+        Err(err) => {
+            err.exit();
+        }
+    };
 
     if matches.get_flag("compress") {
         let input_path = matches.get_one::<String>("input").ok_or_else(|| {
@@ -73,45 +45,9 @@ fn main() -> io::Result<()> {
         })?;
 
         decompress_file(input_path, output_path)?;
-    } else {
-        // Show help if no arguments provided
-        let mut cmd = Command::new("huffman")
-            .version("0.1.0")
-            .about("Huffman compression utility")
-            .arg(
-                Arg::new("compress")
-                    .short('c')
-                    .long("compress")
-                    .help("Compress the input file")
-                    .action(clap::ArgAction::SetTrue)
-                    .conflicts_with("decompress"),
-            )
-            .arg(
-                Arg::new("decompress")
-                    .short('d')
-                    .long("decompress")
-                    .help("Decompress the input file")
-                    .action(clap::ArgAction::SetTrue)
-                    .conflicts_with("compress"),
-            )
-            .arg(
-                Arg::new("output")
-                    .short('o')
-                    .long("output")
-                    .value_name("FILE")
-                    .help("Output file path")
-                    .required(false),
-            )
-            .arg(
-                Arg::new("input")
-                    .value_name("INPUT")
-                    .help("Input file to process")
-                    .required(false)
-                    .index(1),
-            );
-        cmd.print_help()?;
-        println!();
     }
+    // If neither compress nor decompress flags are provided, 
+    // clap will have already shown help and exited
 
     Ok(())
 }
@@ -182,4 +118,38 @@ fn decompress_file(input_path: &str, output_path: &str) -> io::Result<()> {
     println!("Decompressed size: {output_size} bytes");
 
     Ok(())
+}
+
+fn build_cli() -> Command {
+    Command::new("huffman")
+        .version("1.0")
+        .about("A Huffman compression/decompression utility")
+        .arg_required_else_help(true)
+        .arg(
+            Arg::new("compress")
+                .short('c')
+                .long("compress")
+                .action(clap::ArgAction::SetTrue)
+                .help("Compress the input file"),
+        )
+        .arg(
+            Arg::new("decompress")
+                .short('d')
+                .long("decompress")
+                .action(clap::ArgAction::SetTrue)
+                .help("Decompress the input file"),
+        )
+        .arg(
+            Arg::new("input")
+                .help("Input file")
+                .required(true)
+                .index(1),
+        )
+        .arg(
+            Arg::new("output")
+                .short('o')
+                .long("output")
+                .help("Output file")
+                .required(true),
+        )
 }
