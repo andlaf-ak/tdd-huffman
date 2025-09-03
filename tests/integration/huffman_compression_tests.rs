@@ -2,27 +2,27 @@ use rstest::rstest;
 use tdd_huffman::compress_string_with_details;
 
 mod test_utils;
-use test_utils::calculate_data_encoding_bits;
+use test_utils::{calculate_data_encoding_bits, assert_original_length_in_header};
 
 #[rstest]
 #[case::abracadabra(
     "abracadabra - classic test case",
     "abracadabra", 
-    75,    // expected_total_bits
+    107,   // expected_total_bits (75 + 32 for 4-byte header)
     23,    // expected_data_encoding_bits  
     5      // tolerance
 )]
 #[case::quick_brown_fox(
     "the quick brown fox - short sentence", 
     "the quick brown fox jumped over the lazy dog",
-    456,   // expected_total_bits (no compression due to many unique chars)
+    488,   // expected_total_bits (456 + 32 for 4-byte header)
     194,   // expected_data_encoding_bits
     30     // tolerance
 )]
 #[case::sixth_sick_sheik(
     "sixth sick sheik - long repetitive text",
     "The sixth sick sheik's sixth sheep's sick. But if the sixth sick sheik's sixth sheep's sick, then surely the seventh sick sheik's seventh sheep's sicker still. So the sixth sick sheik's sixth sheep's sickness is less serious than the seventh sick sheik's seventh sheep's sickness, unless the sixth sick sheik's sixth sheep's sickness makes the sixth sick sheik's sixth sheep sicker than the seventh sick sheik's seventh sheep, in which case the sixth sick sheik should seek a skilled sheep surgeon to skillfully cure his sixth sheep's sickness swiftly.",
-    2416,  // expected_total_bits (including tree overhead)
+    2448,  // expected_total_bits (2416 + 32 for 4-byte header)
     2125,  // expected_data_encoding_bits
     50     // tolerance
 )]
@@ -39,6 +39,9 @@ fn compress_string_achieves_target_compression(
 
     // Act: Perform compression
     let result = compress_string_with_details(input);
+
+    // Verify that compressed data contains original length in header
+    assert_original_length_in_header(&result.compressed_data, input.len());
 
     // Verify target total compression
     let total_diff = if result.compressed_bits > expected_total_bits {
@@ -99,6 +102,9 @@ fn compress_single_character_repeated(#[case] input: &str) {
     // Act: Perform compression
     let result = compress_string_with_details(input);
 
+    // Verify that compressed data contains original length in header
+    assert_original_length_in_header(&result.compressed_data, input.len());
+
     // Should have exactly 1 unique character
     assert_eq!(result.frequency_map.len(), 1);
     assert_eq!(result.huffman_codes.len(), 1);
@@ -136,6 +142,9 @@ fn compress_all_unique_characters_various_lengths(
 
     // Act: Perform compression
     let result = compress_string_with_details(input);
+
+    // Verify that compressed data contains original length in header
+    assert_original_length_in_header(&result.compressed_data, input.len());
 
     // Should have expected number of unique characters
     assert_eq!(result.frequency_map.len(), expected_unique);
