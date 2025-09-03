@@ -93,6 +93,10 @@ fn compress_string_achieves_target_compression(
 #[case("aaaa")]
 #[case("aaaaa")]
 fn compress_single_character_repeated(#[case] input: &str) {
+    println!("\n🔬 Testing single character repeated: \"{}\"", input);
+    println!("Input length: {} characters", input.len());
+
+    // Act: Perform compression
     let result = compress_string_with_details(input);
 
     // Should have exactly 1 unique character
@@ -103,7 +107,17 @@ fn compress_single_character_repeated(#[case] input: &str) {
     let code = result.huffman_codes.values().next().unwrap();
     assert!(!code.is_empty(), "Code should not be empty");
 
-    println!("Input: \"{}\" -> Code: \"{}\"", input, code);
+    // Calculate data encoding bits
+    let data_encoding_bits = calculate_data_encoding_bits(&result.huffman_codes, input);
+
+    // Print results
+    println!("✅ Results:");
+    println!("   • Original: {} bits", result.original_bits);
+    println!("   • Tree: {} bits", result.serialized_tree.len());
+    println!("   • Data encoding: {} bits", data_encoding_bits);
+    println!("   • Total compressed: {} bits", result.compressed_bits);
+    println!("   • Character code: \"{}\"", code);
+    println!("   • Ratio: {:.1}%", result.compression_ratio * 100.0);
 }
 
 #[rstest]
@@ -116,6 +130,11 @@ fn compress_all_unique_characters_various_lengths(
     #[case] input: &str,
     #[case] expected_unique: usize,
 ) {
+    println!("\n🔬 Testing all unique characters: \"{}\"", input);
+    println!("Input length: {} characters", input.len());
+    println!("Expected unique characters: {}", expected_unique);
+
+    // Act: Perform compression
     let result = compress_string_with_details(input);
 
     // Should have expected number of unique characters
@@ -130,11 +149,19 @@ fn compress_all_unique_characters_various_lengths(
         result.compressed_bits
     );
 
-    println!(
-        "Input: \"{}\" ({} unique) -> {} bits ({}% ratio)",
-        input,
-        expected_unique,
-        result.compressed_bits,
-        (result.compression_ratio * 100.0) as u32
-    );
+    // Calculate data encoding bits
+    let data_encoding_bits = calculate_data_encoding_bits(&result.huffman_codes, input);
+
+    // Print results
+    println!("✅ Results:");
+    println!("   • Original: {} bits", result.original_bits);
+    println!("   • Tree: {} bits", result.serialized_tree.len());
+    println!("   • Data encoding: {} bits", data_encoding_bits);
+    println!("   • Total compressed: {} bits", result.compressed_bits);
+    println!("   • Unique characters: {}", result.frequency_map.len());
+    println!("   • Ratio: {:.1}%", result.compression_ratio * 100.0);
+    println!("   • Huffman codes:");
+    for (char, code) in &result.huffman_codes {
+        println!("     '{}' -> \"{}\"", char, code);
+    }
 }
