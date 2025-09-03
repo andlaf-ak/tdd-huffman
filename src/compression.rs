@@ -57,30 +57,22 @@ pub fn compress<R: Read + Seek, W: Write>(
     mut input_reader: R,
     output_stream: &mut W,
 ) -> std::io::Result<()> {
-    // First pass: count frequencies
     let (frequency_map, total_bytes) = count_frequencies(&mut input_reader)?;
 
-    // Seek back to beginning for second pass
     input_reader.seek(SeekFrom::Start(0))?;
 
-    // Build Huffman tree from frequencies
     let tree = build_huffman_tree(&frequency_map);
     let codes = extract_huffman_codes(&tree);
 
-    // Write original length as header
     let original_length = total_bytes as u32;
     output_stream.write_all(&original_length.to_le_bytes())?;
 
-    // Initialize bit stream for compressed output
     let mut bit_stream = OutputBitStream::new(output_stream);
 
-    // Serialize tree structure to bit stream
     serialize_tree_to_bits(&tree, &mut bit_stream)?;
 
-    // Second pass: encode input data
     encode_input_stream(&mut input_reader, &codes, &mut bit_stream)?;
 
-    // Ensure all bits are written
     bit_stream.flush()?;
 
     Ok(())

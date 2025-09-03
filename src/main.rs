@@ -46,8 +46,6 @@ fn main() -> io::Result<()> {
 
         decompress_file(input_path, output_path)?;
     }
-    // If neither compress nor decompress flags are provided,
-    // clap will have already shown help and exited
 
     Ok(())
 }
@@ -72,7 +70,6 @@ fn compress_file(input_path: &str, output_path: &str) -> io::Result<()> {
 
     compress(input_reader, &mut output_writer)?;
 
-    // Ensure all data is written to disk
     output_writer.flush()?;
     drop(output_writer);
 
@@ -107,7 +104,6 @@ fn decompress_file(input_path: &str, output_path: &str) -> io::Result<()> {
 
     decompress(input_reader, &mut output_writer)?;
 
-    // Ensure all data is written to disk
     output_writer.flush()?;
     drop(output_writer);
 

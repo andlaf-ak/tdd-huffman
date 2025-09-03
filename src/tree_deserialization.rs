@@ -2,7 +2,6 @@ use crate::constants::BITS_PER_BYTE;
 use crate::input_bit_stream::InputBitStream;
 use crate::tree_construction::HuffmanNode;
 
-// Node type indicators in the bit stream
 const LEAF_NODE_BIT: u8 = 1;
 const INTERNAL_NODE_BIT: u8 = 0;
 

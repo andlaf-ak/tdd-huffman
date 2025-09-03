@@ -1,4 +1,3 @@
-/// Helper function to validate that compressed data contains the original length in the header
 pub fn assert_original_length_in_header(compressed_data: &[u8], expected_length: usize) {
     assert!(
         compressed_data.len() >= 4,

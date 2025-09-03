@@ -18,15 +18,12 @@ fn test_compression_round_trip(#[case] test_name: &str, #[case] input: &str) {
     println!("Input: \"{}\"", input);
     println!("Input length: {} characters", input.len());
 
-    // Act: Perform compression
     let mut compressed_data = Vec::new();
     compress(Cursor::new(input.as_bytes()), &mut compressed_data)
         .expect("Compression should succeed");
 
-    // Verify that compressed data contains original length in header
     assert_original_length_in_header(&compressed_data, input.len());
 
-    // Verify round-trip: decompress and check we get back the original
     let mut decompressed_data = Vec::new();
     decompress(Cursor::new(&compressed_data), &mut decompressed_data)
         .expect("Decompression should succeed");
@@ -39,15 +36,12 @@ fn test_compression_round_trip(#[case] test_name: &str, #[case] input: &str) {
         "Round-trip should preserve original data"
     );
 
-    // Basic compression check: ensure we actually compressed something for longer inputs
     if input.len() > 20 {
         println!(
             "Original: {} bytes, Compressed: {} bytes",
             input.len(),
             compressed_data.len()
         );
-        // For longer, repetitive text, we should achieve some compression
-        // This is a loose check since compression effectiveness varies
     }
 
     println!("✅ Round-trip test passed");
@@ -63,15 +57,12 @@ fn test_single_character_repeated(#[case] input: &str) {
     println!("\n🔬 Testing single character repeated: \"{}\"", input);
     println!("Input length: {} characters", input.len());
 
-    // Act: Perform compression and decompression
     let mut compressed_data = Vec::new();
     compress(Cursor::new(input.as_bytes()), &mut compressed_data)
         .expect("Compression should succeed");
 
-    // Verify that compressed data contains original length in header
     assert_original_length_in_header(&compressed_data, input.len());
 
-    // Verify round-trip
     let mut decompressed_data = Vec::new();
     decompress(Cursor::new(&compressed_data), &mut decompressed_data)
         .expect("Decompression should succeed");
@@ -97,15 +88,12 @@ fn test_unique_characters(#[case] input: &str) {
     println!("\n🔬 Testing all unique characters: \"{}\"", input);
     println!("Input length: {} characters", input.len());
 
-    // Act: Perform compression and decompression
     let mut compressed_data = Vec::new();
     compress(Cursor::new(input.as_bytes()), &mut compressed_data)
         .expect("Compression should succeed");
 
-    // Verify that compressed data contains original length in header
     assert_original_length_in_header(&compressed_data, input.len());
 
-    // Verify round-trip
     let mut decompressed_data = Vec::new();
     decompress(Cursor::new(&compressed_data), &mut decompressed_data)
         .expect("Decompression should succeed");
@@ -118,8 +106,6 @@ fn test_unique_characters(#[case] input: &str) {
         "Round-trip should preserve original data"
     );
 
-    // For all unique characters, compression is typically not effective due to tree overhead
-    // But the round-trip should still work correctly
     println!(
         "Original: {} bytes, Compressed: {} bytes",
         input.len(),

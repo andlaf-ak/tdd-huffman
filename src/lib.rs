@@ -1,7 +1,3 @@
-//! TDD Huffman Compression Library
-//!
-//! This library implements Huffman compression using Test-Driven Development.
-
 pub mod code_extraction;
 pub mod compression;
 pub mod constants;
