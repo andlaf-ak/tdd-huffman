@@ -44,7 +44,7 @@ proptest! {
         let input_data = build_input_data(symbol_freq_pairs);
         prop_assume!(input_data.len() >= 2);
 
-        let frequency_map = count_byte_frequencies(&input_data);
+        let (frequency_map, _) = count_frequencies(std::io::Cursor::new(&input_data)).unwrap();
         prop_assume!(frequency_map.len() >= 2); // Ensure unique symbols
 
         let tree = build_huffman_tree(&frequency_map);
@@ -69,7 +69,7 @@ proptest! {
         let input_data = build_input_data(symbol_freq_pairs);
         prop_assume!(input_data.len() >= 2);
 
-        let frequency_map = count_byte_frequencies(&input_data);
+        let (frequency_map, _) = count_frequencies(std::io::Cursor::new(&input_data)).unwrap();
         prop_assume!(frequency_map.len() >= 2); // Ensure unique symbols
 
         let tree = build_huffman_tree(&frequency_map);

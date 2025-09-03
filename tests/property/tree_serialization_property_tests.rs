@@ -42,7 +42,7 @@ proptest! {
     fn serialize_then_deserialize_equals_original_tree(_dummy in 0u8..1) {
         // Use the "she sells seashells on the seashore" example
         let input = b"she sells seashells on the seashore";
-        let freq_map = count_byte_frequencies(input);
+        let (freq_map, _) = count_frequencies(std::io::Cursor::new(input)).unwrap();
         let tree = build_huffman_tree(&freq_map);
 
         // Serialize the tree to bits using a Vec<u8> buffer

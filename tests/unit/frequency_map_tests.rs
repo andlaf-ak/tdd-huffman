@@ -1,23 +1,24 @@
-use tdd_huffman::count_byte_frequencies;
+use tdd_huffman::count_frequencies;
+use std::io::Cursor;
 
 #[test]
 fn count_single_byte_occurrence() {
     let input = [65u8];
-    let frequencies = count_byte_frequencies(&input);
+    let (frequencies, _) = count_frequencies(Cursor::new(input)).unwrap();
     assert_eq!(frequencies.get(&65), Some(&1));
 }
 
 #[test]
 fn count_multiple_occurrences_of_same_byte() {
     let input = [65u8, 65u8, 65u8];
-    let frequencies = count_byte_frequencies(&input);
+    let (frequencies, _) = count_frequencies(Cursor::new(input)).unwrap();
     assert_eq!(frequencies.get(&65), Some(&3));
 }
 
 #[test]
 fn count_different_bytes_with_different_frequencies() {
     let input = [65u8, 66u8, 65u8, 67u8, 66u8, 66u8];
-    let frequencies = count_byte_frequencies(&input);
+    let (frequencies, _) = count_frequencies(Cursor::new(input)).unwrap();
     assert_eq!(frequencies.get(&65), Some(&2)); // 'A' appears 2 times
     assert_eq!(frequencies.get(&66), Some(&3)); // 'B' appears 3 times
     assert_eq!(frequencies.get(&67), Some(&1)); // 'C' appears 1 time
@@ -26,7 +27,7 @@ fn count_different_bytes_with_different_frequencies() {
 #[test]
 fn handle_empty_input_gracefully() {
     let input: &[u8] = &[];
-    let frequencies = count_byte_frequencies(input);
+    let (frequencies, _) = count_frequencies(Cursor::new(input)).unwrap();
 
     // Basic requirements that should pass
     assert_eq!(frequencies.len(), 0);
@@ -43,6 +44,6 @@ fn handle_empty_input_gracefully() {
     assert_eq!(frequencies.get(&255), None);
 
     // Additional requirement: consecutive calls with empty input should be consistent
-    let frequencies2 = count_byte_frequencies(&[]);
+    let (frequencies2, _) = count_frequencies(Cursor::new(&[])).unwrap();
     assert_eq!(frequencies, frequencies2);
 }
