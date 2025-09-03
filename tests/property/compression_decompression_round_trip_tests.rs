@@ -27,38 +27,47 @@ const LOREM_IPSUM: &str = "Lorem ipsum dolor sit amet, consectetur adipiscing el
 #[case::numbers_and_punctuation("Hello, World! 123 $%^&*()")]
 #[case::unicode_basic("café naïve résumé")]
 fn test_compression_decompression_round_trip(#[case] input: &str) {
-    println!("\n🔄 Testing round-trip for: \"{}\"", if input.len() > 50 { 
-        format!("{}...", &input[..47])
-    } else { 
-        input.to_string() 
-    });
+    println!(
+        "\n🔄 Testing round-trip for: \"{}\"",
+        if input.len() > 50 {
+            format!("{}...", &input[..47])
+        } else {
+            input.to_string()
+        }
+    );
     println!("Input length: {} characters", input.len());
-    
+
     // Skip empty string as it may not compress meaningfully
     if input.is_empty() {
         println!("⏭️  Skipping empty string test");
         return;
     }
-    
+
     // Compress the input
     let compressed_data = compress_string(input);
     println!("Compressed size: {} bytes", compressed_data.len());
-    
+
     // Decompress the compressed data
     let cursor = Cursor::new(compressed_data);
     let mut output = Vec::new();
-    
-    decompress(cursor, &mut output)
-        .expect("Decompression should succeed");
-    
+
+    decompress(cursor, &mut output).expect("Decompression should succeed");
+
     // Convert back to string and verify round-trip
-    let decompressed_string = String::from_utf8(output)
-        .expect("Decompressed bytes should be valid UTF-8");
-    
-    println!("Original length: {}, Decompressed length: {}", input.len(), decompressed_string.len());
-    
+    let decompressed_string =
+        String::from_utf8(output).expect("Decompressed bytes should be valid UTF-8");
+
+    println!(
+        "Original length: {}, Decompressed length: {}",
+        input.len(),
+        decompressed_string.len()
+    );
+
     // Verify exact match
-    assert_eq!(input, decompressed_string, "Round-trip failed: input != decompressed output");
+    assert_eq!(
+        input, decompressed_string,
+        "Round-trip failed: input != decompressed output"
+    );
     println!("✅ Round-trip successful!");
 }
 
@@ -68,78 +77,78 @@ proptest! {
     fn compression_decompression_round_trip_property(
         input in "[a-zA-Z0-9 .,!?]{1,100}"
     ) {
-        println!("\n🎲 Property test for random input: \"{}\"", 
+        println!("\n🎲 Property test for random input: \"{}\"",
                 if input.len() > 30 { format!("{}...", &input[..27]) } else { input.clone() });
-        
+
         // Compress the input
         let compressed_data = compress_string(&input);
-        
+
         // Decompress the compressed data
         let cursor = Cursor::new(compressed_data);
         let mut output = Vec::new();
-        
+
         decompress(cursor, &mut output)
             .expect("Decompression should succeed");
-        
+
         // Convert back to string and verify round-trip
         let decompressed_string = String::from_utf8(output)
             .expect("Decompressed bytes should be valid UTF-8");
-        
+
         // Verify exact match
         prop_assert_eq!(input, decompressed_string);
     }
-    
+
     #[test]
     fn compression_decompression_round_trip_repeated_chars(
         ch in prop::char::range('a', 'z'),
         count in 1usize..=50
     ) {
         let input = ch.to_string().repeat(count);
-        println!("\n🔁 Property test for repeated char '{}' × {}: \"{}\"", 
+        println!("\n🔁 Property test for repeated char '{}' × {}: \"{}\"",
                 ch, count, if input.len() > 30 { format!("{}...", &input[..27]) } else { input.clone() });
-        
+
         // Compress the input
         let compressed_data = compress_string(&input);
-        
+
         // Decompress the compressed data
         let cursor = Cursor::new(compressed_data);
         let mut output = Vec::new();
-        
+
         decompress(cursor, &mut output)
             .expect("Decompression should succeed");
-        
+
         // Convert back to string and verify round-trip
         let decompressed_string = String::from_utf8(output)
             .expect("Decompressed bytes should be valid UTF-8");
-        
+
         // Verify exact match
         prop_assert_eq!(input, decompressed_string);
     }
-    
+
     #[test]
     fn compression_decompression_round_trip_ascii_printable(
         input in prop::collection::vec(32u8..=126, 1..=100)
     ) {
         // Convert bytes to ASCII string
         let input_string = String::from_utf8(input).expect("Should be valid ASCII");
-        
-        println!("\n� Property test for ASCII data (len={}): \"{}\"", 
+
+        println!("\n� Property test for ASCII data (len={}): \"{}\"",
                 input_string.len(), if input_string.len() > 30 { format!("{}...", &input_string[..27]) } else { input_string.clone() });
-        
+
         // Compress the input
         let compressed_data = compress_string(&input_string);
-        
+
         // Decompress the compressed data
         let cursor = Cursor::new(compressed_data);
         let mut output = Vec::new();
-        
+
         decompress(cursor, &mut output)
             .expect("Decompression should succeed");
-        
+
         // Convert back to string and verify round-trip
         let decompressed_string = String::from_utf8(output)
             .expect("Decompressed bytes should be valid UTF-8");
-        
+
         // Verify exact match
         prop_assert_eq!(input_string, decompressed_string);
     }
