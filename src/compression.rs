@@ -6,18 +6,17 @@ use crate::{
 use std::collections::HashMap;
 use std::io::{Read, Seek, SeekFrom, Write};
 
-/// Count byte frequencies by reading from a stream
-fn count_frequencies_from_stream<R: Read>(
+fn count_frequencies<R: Read>(
     mut reader: R,
 ) -> std::io::Result<(ByteFrequencyMap, usize)> {
     let mut frequency_map = HashMap::new();
     let mut total_bytes = 0;
-    let mut buffer = [0u8; 8192]; // 8KB buffer for efficient reading
+    let mut buffer = [0u8; 8192];
 
     loop {
         let bytes_read = reader.read(&mut buffer)?;
         if bytes_read == 0 {
-            break; // End of stream
+            break;
         }
 
         total_bytes += bytes_read;
@@ -35,12 +34,12 @@ fn encode_input_stream<R: Read, W: std::io::Write>(
     codes: &HashMap<u8, String>,
     bit_stream: &mut OutputBitStream<W>,
 ) -> std::io::Result<()> {
-    let mut buffer = [0u8; 8192]; // 8KB buffer for efficient reading
+    let mut buffer = [0u8; 8192];
 
     loop {
         let bytes_read = input_reader.read(&mut buffer)?;
         if bytes_read == 0 {
-            break; // End of stream
+            break;
         }
 
         for &byte in &buffer[..bytes_read] {
@@ -61,7 +60,7 @@ pub fn compress<R: Read + Seek, W: Write>(
     output_stream: &mut W,
 ) -> std::io::Result<()> {
     // First pass: count frequencies
-    let (frequency_map, total_bytes) = count_frequencies_from_stream(&mut input_reader)?;
+    let (frequency_map, total_bytes) = count_frequencies(&mut input_reader)?;
 
     // Seek back to beginning for second pass
     input_reader.seek(SeekFrom::Start(0))?;
