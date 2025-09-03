@@ -40,7 +40,7 @@ pub fn compress<R: Read, W: Write>(
     // Write original length as header
     let original_length = input_bytes.len() as u32;
     output_stream.write_all(&original_length.to_le_bytes())?;
-    
+
     // Initialize bit stream for compressed output
     let mut bit_stream = OutputBitStream::new(output_stream);
 
@@ -75,7 +75,7 @@ pub fn compress_with_stats<R: Read, W: Write>(
     // Read all input data into memory first to analyze frequencies
     let mut input_bytes = Vec::new();
     input_reader.read_to_end(&mut input_bytes)?;
-    
+
     let original_bits = input_bytes.len() * 8;
 
     // Build Huffman tree from input data
@@ -92,7 +92,7 @@ pub fn compress_with_stats<R: Read, W: Write>(
     let header_bytes = original_length.to_le_bytes();
     output_stream.write_all(&header_bytes)?;
     bytes_written += header_bytes.len();
-    
+
     // Use a counting wrapper to track compressed output
     let mut counting_writer = CountingWriter::new(output_stream);
     let mut bit_stream = OutputBitStream::new(&mut counting_writer);

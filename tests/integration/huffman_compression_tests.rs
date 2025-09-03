@@ -1,6 +1,6 @@
 use rstest::rstest;
-use tdd_huffman::compress_with_stats;
 use std::io::Cursor;
+use tdd_huffman::compress_with_stats;
 
 mod test_utils;
 use test_utils::{assert_original_length_in_header, calculate_data_encoding_bits};

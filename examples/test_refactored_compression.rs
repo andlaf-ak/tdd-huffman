@@ -1,10 +1,10 @@
-use tdd_huffman::compress;
 use std::io::Cursor;
+use tdd_huffman::compress;
 
 fn main() {
     let test_string = "hello world";
     let mut compressed_data = Vec::new();
-    
+
     compress(Cursor::new(test_string.as_bytes()), &mut compressed_data)
         .expect("Compression should succeed");
 
