@@ -3,8 +3,11 @@
 # Exit on any command failure
 set -e
 
-# Run full test suite before pushing
-echo "🧪 Running tests before push..."
-make test
+# Run full test suite (including e2e tests) before pushing
+echo "🧪 Running unit tests before push..."
+make test-unit
+
+echo "🚀 Running end-to-end tests before push..."
+make test-e2e
 
 echo "✅ All tests passed! Ready to push."
