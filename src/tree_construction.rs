@@ -3,7 +3,7 @@ use crate::node_selection::SymbolFrequency;
 use std::cmp::Ordering;
 use std::collections::BinaryHeap;
 
-#[derive(PartialEq, Eq)]
+#[derive(PartialEq, Eq, Debug)]
 pub struct HuffmanNode {
     frequency: usize,
     symbol: Option<u8>,

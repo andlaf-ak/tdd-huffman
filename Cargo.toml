@@ -62,3 +62,7 @@ path = "tests/property/code_extraction_property_tests.rs"
 [[test]]
 name = "tree_construction_property_tests"
 path = "tests/property/tree_construction_property_tests.rs"
+
+[[test]]
+name = "tree_serialization_property_tests"
+path = "tests/property/tree_serialization_property_tests.rs"
