@@ -46,7 +46,7 @@ fn main() -> io::Result<()> {
 
         decompress_file(input_path, output_path)?;
     }
-    // If neither compress nor decompress flags are provided, 
+    // If neither compress nor decompress flags are provided,
     // clap will have already shown help and exited
 
     Ok(())
@@ -139,12 +139,7 @@ fn build_cli() -> Command {
                 .action(clap::ArgAction::SetTrue)
                 .help("Decompress the input file"),
         )
-        .arg(
-            Arg::new("input")
-                .help("Input file")
-                .required(true)
-                .index(1),
-        )
+        .arg(Arg::new("input").help("Input file").required(true).index(1))
         .arg(
             Arg::new("output")
                 .short('o')
