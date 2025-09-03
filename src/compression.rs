@@ -1,6 +1,5 @@
 use crate::{
-    code_extraction::extract_huffman_codes, 
-    frequency_map::count_frequencies,
+    code_extraction::extract_huffman_codes, frequency_map::count_frequencies,
     output_bit_stream::OutputBitStream, tree_construction::build_huffman_tree,
     tree_serialization::serialize_tree_to_bits,
 };

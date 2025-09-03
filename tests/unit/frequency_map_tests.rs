@@ -1,5 +1,5 @@
-use tdd_huffman::count_frequencies;
 use std::io::Cursor;
+use tdd_huffman::count_frequencies;
 
 #[test]
 fn count_single_byte_occurrence() {
