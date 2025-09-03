@@ -1,6 +1,6 @@
 #[path = "unit/code_extraction_tests.rs"]
 mod code_extraction_tests;
-#[path = "unit/decompression_tests.rs"]  
+#[path = "unit/decompression_tests.rs"]
 mod decompression_tests;
 #[path = "unit/frequency_map_tests.rs"]
 mod frequency_map_tests;
