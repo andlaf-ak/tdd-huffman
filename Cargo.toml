@@ -9,7 +9,12 @@ repository = "https://github.com/andlaf-ak/tdd-huffman"
 [lib]
 doctest = false
 
+[[bin]]
+name = "huffman"
+path = "src/main.rs"
+
 [dependencies]
+clap = { version = "4.0", features = ["derive"] }
 
 [dev-dependencies]
 proptest = "1.0"

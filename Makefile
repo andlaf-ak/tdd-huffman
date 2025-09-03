@@ -1,4 +1,4 @@
-.PHONY: build run test format lint check
+.PHONY: build run test test-unit test-e2e format lint check
 
 # Default target
 all: test
@@ -11,9 +11,16 @@ build:
 run:
 	cargo run
 
-# Run tests
-test:
+# Run unit and integration tests
+test-unit:
 	cargo test
+
+# Run end-to-end tests
+test-e2e: build
+	./scripts/e2e_test.sh
+
+# Run all tests (unit + e2e)
+test: test-unit test-e2e
 
 # Format code
 format:
