@@ -2,7 +2,7 @@ use rstest::rstest;
 use tdd_huffman::compress_string_with_details;
 
 mod test_utils;
-use test_utils::{calculate_data_encoding_bits, assert_original_length_in_header};
+use test_utils::{assert_original_length_in_header, calculate_data_encoding_bits};
 
 #[rstest]
 #[case::abracadabra(

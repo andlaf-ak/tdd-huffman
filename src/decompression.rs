@@ -15,13 +15,13 @@ pub fn decompress<R: Read, W: Write>(
     let mut header_bytes = [0u8; 4];
     reader.read_exact(&mut header_bytes)?;
     let original_length = u32::from_le_bytes(header_bytes) as usize;
-    
+
     // Create bit stream for the remaining data
     let mut bit_stream = InputBitStream::new(reader);
-    
+
     // Deserialize the tree from the bit stream
     let tree = deserialize_tree(&mut bit_stream)?;
-    
+
     // Decode the compressed data
     decode_compressed_data(&tree, &mut bit_stream, output_stream, original_length)
 }
@@ -69,18 +69,24 @@ fn decode_next_symbol<R: Read>(
     bit_stream: &mut InputBitStream<R>,
 ) -> std::io::Result<u8> {
     let mut current_node = tree;
-    
+
     while !current_node.is_leaf() {
         let bit = bit_stream.read_bit()?;
         current_node = match bit {
-            LEFT_BIT => current_node.left_child().expect("Internal node must have left child"),
-            RIGHT_BIT => current_node.right_child().expect("Internal node must have right child"),
-            _ => return Err(std::io::Error::new(
-                std::io::ErrorKind::InvalidData,
-                format!("Invalid bit value: {}", bit),
-            )),
+            LEFT_BIT => current_node
+                .left_child()
+                .expect("Internal node must have left child"),
+            RIGHT_BIT => current_node
+                .right_child()
+                .expect("Internal node must have right child"),
+            _ => {
+                return Err(std::io::Error::new(
+                    std::io::ErrorKind::InvalidData,
+                    format!("Invalid bit value: {}", bit),
+                ))
+            }
         };
     }
-    
+
     Ok(current_node.symbol().expect("Leaf node must have a symbol"))
 }

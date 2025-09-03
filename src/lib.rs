@@ -16,7 +16,7 @@ pub mod tree_serialization;
 
 pub use code_extraction::{extract_huffman_codes, HuffmanCodeMap};
 pub use compression::{compress_string, compress_string_with_details, CompressionResult};
-pub use decompression::{decompress, decode_compressed_data};
+pub use decompression::{decode_compressed_data, decompress};
 pub use frequency_map::{count_byte_frequencies, ByteFrequencyMap};
 pub use input_bit_stream::InputBitStream;
 pub use node_selection::select_nodes;

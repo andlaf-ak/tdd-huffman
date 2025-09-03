@@ -44,11 +44,11 @@ pub fn compress_string_with_details(input: &str) -> CompressionResult {
     let serialized_tree = serialize_tree(&tree);
 
     let mut output = Vec::new();
-    
+
     // Write the original data length as a 4-byte little-endian header
     let original_length = input_bytes.len() as u32;
     output.extend_from_slice(&original_length.to_le_bytes());
-    
+
     let mut bit_stream = OutputBitStream::new(&mut output);
 
     serialize_tree_to_bits(&tree, &mut bit_stream).expect("Failed to serialize tree to bit stream");
