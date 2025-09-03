@@ -27,3 +27,6 @@ jobs:
     
     - name: Run tests
       run: cargo test
+    
+    - name: Run end-to-end tests
+      run: make test-e2e
