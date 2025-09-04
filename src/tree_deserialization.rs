@@ -30,18 +30,16 @@ fn deserialize_leaf_node<R: std::io::Read>(
 fn deserialize_internal_node<R: std::io::Read>(
     bit_stream: &mut InputBitStream<R>,
 ) -> std::io::Result<HuffmanNode> {
-    let left_child = deserialize_tree(bit_stream)?;
-    let right_child = deserialize_tree(bit_stream)?;
-    Ok(HuffmanNode::new_internal(left_child, right_child))
+    deserialize_tree(bit_stream).and_then(|left_child| {
+        deserialize_tree(bit_stream)
+            .map(|right_child| HuffmanNode::new_internal(left_child, right_child))
+    })
 }
 
 fn read_symbol_from_bits<R: std::io::Read>(
     bit_stream: &mut InputBitStream<R>,
 ) -> std::io::Result<u8> {
-    let mut symbol = 0u8;
-    for _ in 0..BITS_PER_BYTE {
-        let bit = bit_stream.read_bit()?;
-        symbol = (symbol << 1) | bit;
-    }
-    Ok(symbol)
+    (0..BITS_PER_BYTE).try_fold(0u8, |acc, _| {
+        bit_stream.read_bit().map(|bit| (acc << 1) | bit)
+    })
 }

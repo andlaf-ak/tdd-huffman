@@ -77,27 +77,36 @@ pub fn merge_nodes(left: HuffmanNode, right: HuffmanNode) -> HuffmanNode {
     HuffmanNode::new_internal(left, right)
 }
 
+fn build_tree_from_heap(mut heap: BinaryHeap<HuffmanNode>) -> HuffmanNode {
+    if heap.len() == 1 {
+        return heap.pop().expect("Heap has exactly one element");
+    }
+
+    std::iter::from_fn(|| {
+        if heap.len() > 1 {
+            let node1 = heap.pop().expect("Heap has at least 2 elements");
+            let node2 = heap.pop().expect("Heap has at least 1 element");
+            let merged = HuffmanNode::new_internal(node1, node2);
+            heap.push(merged);
+            Some(())
+        } else {
+            None
+        }
+    })
+    .last();
+
+    heap.pop().expect("Heap should have exactly one element")
+}
+
 pub fn build_huffman_tree(frequency_map: &ByteFrequencyMap) -> HuffmanNode {
     if frequency_map.is_empty() {
         panic!("Cannot build Huffman tree from empty frequency map");
     }
 
-    let mut heap: BinaryHeap<HuffmanNode> = frequency_map
+    let heap: BinaryHeap<HuffmanNode> = frequency_map
         .iter()
         .map(|(symbol, frequency)| HuffmanNode::new_leaf(*symbol, *frequency))
         .collect();
 
-    if heap.len() == 1 {
-        return heap.pop().expect("Heap has exactly one element");
-    }
-
-    while heap.len() > 1 {
-        let node1 = heap.pop().expect("Heap has at least 2 elements");
-        let node2 = heap.pop().expect("Heap has at least 1 element");
-
-        let merged = HuffmanNode::new_internal(node1, node2);
-        heap.push(merged);
-    }
-
-    heap.pop().expect("Heap should have exactly one element")
+    build_tree_from_heap(heap)
 }

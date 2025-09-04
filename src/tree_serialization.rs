@@ -16,32 +16,29 @@ fn serialize_leaf_to_bits<W: Write>(
     tree: &HuffmanNode,
     bit_stream: &mut OutputBitStream<W>,
 ) -> std::io::Result<()> {
-    bit_stream.write_bit(1)?;
-
     let symbol = tree.symbol().expect("Leaf node must have a symbol");
-    for i in (0..8).rev() {
-        let bit = (symbol >> i) & 1;
-        bit_stream.write_bit(bit)?;
-    }
 
-    Ok(())
+    std::iter::once(1)
+        .chain((0..8).rev().map(|i| (symbol >> i) & 1))
+        .try_for_each(|bit| bit_stream.write_bit(bit))
 }
 
 fn serialize_internal_to_bits<W: Write>(
     tree: &HuffmanNode,
     bit_stream: &mut OutputBitStream<W>,
 ) -> std::io::Result<()> {
-    bit_stream.write_bit(0)?;
-
-    if let Some(left_child) = tree.left_child() {
-        serialize_tree_to_bits(left_child, bit_stream)?;
-    }
-
-    if let Some(right_child) = tree.right_child() {
-        serialize_tree_to_bits(right_child, bit_stream)?;
-    }
-
-    Ok(())
+    bit_stream
+        .write_bit(0)
+        .and_then(|_| {
+            tree.left_child()
+                .map(|left| serialize_tree_to_bits(left, bit_stream))
+                .unwrap_or(Ok(()))
+        })
+        .and_then(|_| {
+            tree.right_child()
+                .map(|right| serialize_tree_to_bits(right, bit_stream))
+                .unwrap_or(Ok(()))
+        })
 }
 
 pub fn serialize_tree(tree: &HuffmanNode) -> String {
@@ -67,22 +64,10 @@ fn count_tree_bits(tree: &HuffmanNode) -> usize {
 }
 
 fn bits_to_string(bytes: &[u8], num_bits: usize) -> String {
-    let mut result = String::new();
-    let mut bits_read = 0;
-
-    for &byte in bytes {
-        for i in (0..8).rev() {
-            if bits_read >= num_bits {
-                break;
-            }
-            let bit = (byte >> i) & 1;
-            result.push(if bit == 1 { '1' } else { '0' });
-            bits_read += 1;
-        }
-        if bits_read >= num_bits {
-            break;
-        }
-    }
-
-    result
+    bytes
+        .iter()
+        .flat_map(|&byte| (0..8).rev().map(move |i| (byte >> i) & 1))
+        .take(num_bits)
+        .map(|bit| if bit == 1 { '1' } else { '0' })
+        .collect()
 }
