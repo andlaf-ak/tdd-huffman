@@ -12,14 +12,13 @@ pub fn decompress<R: Read, W: Write>(
 ) -> std::io::Result<()> {
     let mut reader = input_reader;
     let mut header_bytes = [0u8; 4];
-    reader.read_exact(&mut header_bytes)?;
-    let original_length = u32::from_le_bytes(header_bytes) as usize;
-
-    let mut bit_stream = InputBitStream::new(reader);
-
-    let tree = deserialize_tree(&mut bit_stream)?;
-
-    decode_compressed_data(&tree, &mut bit_stream, output_stream, original_length)
+    reader.read_exact(&mut header_bytes)
+        .map(|_| u32::from_le_bytes(header_bytes) as usize)
+        .and_then(|original_length| {
+            let mut bit_stream = InputBitStream::new(reader);
+            deserialize_tree(&mut bit_stream)
+                .and_then(|tree| decode_compressed_data(&tree, &mut bit_stream, output_stream, original_length))
+        })
 }
 pub fn decode_compressed_data<R: Read, W: Write>(
     tree: &HuffmanNode,
@@ -40,10 +39,16 @@ fn decode_single_symbol_tree<W: Write>(
     output_length: usize,
 ) -> std::io::Result<()> {
     let symbol = tree.symbol().expect("Leaf node must have a symbol");
-    for _ in 0..output_length {
-        output_stream.write_all(&[symbol])?;
-    }
-    Ok(())
+    let symbols = std::iter::repeat_n(symbol, output_length).collect::<Vec<_>>();
+    output_stream.write_all(&symbols)
+}
+
+fn decode_symbols<'a, R: Read>(
+    tree: &'a HuffmanNode,
+    bit_stream: &'a mut InputBitStream<R>,
+    count: usize,
+) -> impl Iterator<Item = std::io::Result<u8>> + 'a {
+    (0..count).map(move |_| decode_next_symbol(tree, bit_stream))
 }
 
 fn decode_multi_symbol_tree<R: Read, W: Write>(
@@ -52,36 +57,35 @@ fn decode_multi_symbol_tree<R: Read, W: Write>(
     output_stream: &mut W,
     output_length: usize,
 ) -> std::io::Result<()> {
-    for _ in 0..output_length {
-        let symbol = decode_next_symbol(tree, bit_stream)?;
-        output_stream.write_all(&[symbol])?;
-    }
-    Ok(())
+    let symbols: Result<Vec<_>, _> = decode_symbols(tree, bit_stream, output_length).collect();
+    let symbols = symbols?;
+    output_stream.write_all(&symbols)
 }
 
 fn decode_next_symbol<R: Read>(
     tree: &HuffmanNode,
     bit_stream: &mut InputBitStream<R>,
 ) -> std::io::Result<u8> {
-    let mut current_node = tree;
-
-    while !current_node.is_leaf() {
-        let bit = bit_stream.read_bit()?;
-        current_node = match bit {
-            LEFT_BIT => current_node
-                .left_child()
-                .expect("Internal node must have left child"),
-            RIGHT_BIT => current_node
-                .right_child()
-                .expect("Internal node must have right child"),
-            _ => {
-                return Err(std::io::Error::new(
-                    std::io::ErrorKind::InvalidData,
-                    format!("Invalid bit value: {bit}"),
-                ))
+    std::iter::successors(Some(Ok(tree)), |node_result| {
+        node_result.as_ref().ok().and_then(|node| {
+            if node.is_leaf() {
+                None
+            } else {
+                Some(
+                    bit_stream.read_bit()
+                        .and_then(|bit| match bit {
+                            LEFT_BIT => Ok(node.left_child().expect("Internal node must have left child")),
+                            RIGHT_BIT => Ok(node.right_child().expect("Internal node must have right child")),
+                            _ => Err(std::io::Error::new(
+                                std::io::ErrorKind::InvalidData,
+                                format!("Invalid bit value: {bit}"),
+                            ))
+                        })
+                )
             }
-        };
-    }
-
-    Ok(current_node.symbol().expect("Leaf node must have a symbol"))
+        })
+    })
+    .last()
+    .unwrap()
+    .map(|node| node.symbol().expect("Leaf node must have a symbol"))
 }
