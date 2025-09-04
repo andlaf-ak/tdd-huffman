@@ -2,7 +2,7 @@
 name = "tdd-huffman"
 version = "0.1.0"
 edition = "2021"
-authors = ["Your Name <andrea.laforgia@armakuni.com>"]
+authors = ["Andrea Laforgia <andrea.laforgia@armakuni.com>"]
 description = "A TDD implementation of Huffman Compression"
 repository = "https://github.com/andlaf-ak/tdd-huffman"
 
