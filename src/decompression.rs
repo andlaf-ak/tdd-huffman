@@ -22,6 +22,7 @@ pub fn decompress<R: Read, W: Write>(
             })
         })
 }
+
 pub fn decode_compressed_data<R: Read, W: Write>(
     tree: &HuffmanNode,
     bit_stream: &mut InputBitStream<R>,
