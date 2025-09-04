@@ -2,6 +2,23 @@
 
 A Test-Driven Development implementation of Huffman compression in Rust.
 
+## AI-Assisted Development
+
+This program was developed entirely with AI assistance - **not a single line of code was written manually**, including all tests. The development approach followed what I call **red-green-(r)efactor-(R)efactor**:
+
+### Development Tools Used:
+- **GitHub Copilot** in VSCode for initial TDD implementation
+- **Claude Sonnet 4** via Claude Code for refactoring and functional programming improvements
+
+### Development Process:
+
+1. **Red Phase**: Write failing tests following strict instructions in `.github/.copilot-instructions.md`
+2. **Green Phase**: Implement minimal code to make tests pass
+3. **Small-r refactoring**: Minor code improvements while preserving behavior
+4. **Big-R Refactoring**: Major structural improvements and architectural changes
+
+This disciplined cadence allowed me to [separate behavior from structure](https://tidyfirst.substack.com/p/structure-and-behavior) (as described by Kent Beck), experiment with changes in isolation, and either commit to improvements or try different approaches. The strict separation between behavior changes (red-green) and structure changes (refactoring phases) enabled confident experimentation without breaking functionality.
+
 ## Prerequisites
 
 Install Rust and the required components. Choose one of the following methods:
