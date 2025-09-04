@@ -12,12 +12,14 @@ pub fn decompress<R: Read, W: Write>(
 ) -> std::io::Result<()> {
     let mut reader = input_reader;
     let mut header_bytes = [0u8; 4];
-    reader.read_exact(&mut header_bytes)
+    reader
+        .read_exact(&mut header_bytes)
         .map(|_| u32::from_le_bytes(header_bytes) as usize)
         .and_then(|original_length| {
             let mut bit_stream = InputBitStream::new(reader);
-            deserialize_tree(&mut bit_stream)
-                .and_then(|tree| decode_compressed_data(&tree, &mut bit_stream, output_stream, original_length))
+            deserialize_tree(&mut bit_stream).and_then(|tree| {
+                decode_compressed_data(&tree, &mut bit_stream, output_stream, original_length)
+            })
         })
 }
 pub fn decode_compressed_data<R: Read, W: Write>(
@@ -71,17 +73,20 @@ fn decode_next_symbol<R: Read>(
             if node.is_leaf() {
                 None
             } else {
-                Some(
-                    bit_stream.read_bit()
-                        .and_then(|bit| match bit {
-                            LEFT_BIT => Ok(node.left_child().expect("Internal node must have left child")),
-                            RIGHT_BIT => Ok(node.right_child().expect("Internal node must have right child")),
-                            _ => Err(std::io::Error::new(
-                                std::io::ErrorKind::InvalidData,
-                                format!("Invalid bit value: {bit}"),
-                            ))
-                        })
-                )
+                Some(bit_stream.read_bit().and_then(|bit| {
+                    match bit {
+                        LEFT_BIT => Ok(node
+                            .left_child()
+                            .expect("Internal node must have left child")),
+                        RIGHT_BIT => Ok(node
+                            .right_child()
+                            .expect("Internal node must have right child")),
+                        _ => Err(std::io::Error::new(
+                            std::io::ErrorKind::InvalidData,
+                            format!("Invalid bit value: {bit}"),
+                        )),
+                    }
+                }))
             }
         })
     })
