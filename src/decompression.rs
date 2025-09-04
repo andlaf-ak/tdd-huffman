@@ -6,6 +6,11 @@ use std::io::{Read, Write};
 const LEFT_BIT: u8 = 0;
 const RIGHT_BIT: u8 = 1;
 
+// Decompresses Huffman-encoded data back to original form
+// Step 1: Read the 4-byte header containing original file size
+// Step 2: Deserialize the Huffman tree from the bit stream
+// Step 3: Use the tree to decode the compressed data back to original bytes
+// Uses Result chaining (and_then) to handle errors at each step
 pub fn decompress<R: Read, W: Write>(
     input_reader: R,
     output_stream: &mut W,
@@ -23,6 +28,9 @@ pub fn decompress<R: Read, W: Write>(
         })
 }
 
+// Decodes compressed data using the Huffman tree
+// Handles two cases: single symbol trees (where all data is the same character)
+// and multi-symbol trees (where we traverse the tree using bits to find symbols)
 pub fn decode_compressed_data<R: Read, W: Write>(
     tree: &HuffmanNode,
     bit_stream: &mut InputBitStream<R>,
@@ -36,6 +44,9 @@ pub fn decode_compressed_data<R: Read, W: Write>(
     }
 }
 
+// Handles the special case where all input was the same character
+// Simply repeats the single symbol for the required number of times
+// Uses repeat_n to generate the required number of copies efficiently
 fn decode_single_symbol_tree<W: Write>(
     tree: &HuffmanNode,
     output_stream: &mut W,
@@ -46,6 +57,10 @@ fn decode_single_symbol_tree<W: Write>(
     output_stream.write_all(&symbols)
 }
 
+// Creates an iterator that decodes the specified number of symbols
+// Each iteration reads bits from the stream and traverses the Huffman tree
+// until it reaches a leaf node, then returns the symbol at that leaf
+// Returns an iterator of Results to handle any IO errors during decoding
 fn decode_symbols<'a, R: Read>(
     tree: &'a HuffmanNode,
     bit_stream: &'a mut InputBitStream<R>,
@@ -54,6 +69,10 @@ fn decode_symbols<'a, R: Read>(
     (0..count).map(move |_| decode_next_symbol(tree, bit_stream))
 }
 
+// Decodes data from a tree with multiple different symbols
+// Uses the decode_symbols iterator to get all the decoded bytes
+// Collects them into a vector and writes the entire result at once
+// This is more efficient than writing each symbol individually
 fn decode_multi_symbol_tree<R: Read, W: Write>(
     tree: &HuffmanNode,
     bit_stream: &mut InputBitStream<R>,
@@ -65,6 +84,12 @@ fn decode_multi_symbol_tree<R: Read, W: Write>(
     output_stream.write_all(&symbols)
 }
 
+// Decodes a single symbol by traversing the Huffman tree
+// Starts at the root and follows the tree based on bits from the input:
+// - 0 bit = go to left child
+// - 1 bit = go to right child
+// Continues until reaching a leaf node, then returns the symbol at that leaf
+// Uses successors to generate a sequence of tree nodes based on input bits
 fn decode_next_symbol<R: Read>(
     tree: &HuffmanNode,
     bit_stream: &mut InputBitStream<R>,

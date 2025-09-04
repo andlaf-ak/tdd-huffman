@@ -5,6 +5,11 @@ use crate::tree_construction::HuffmanNode;
 const LEAF_NODE_BIT: u8 = 1;
 const INTERNAL_NODE_BIT: u8 = 0;
 
+// Reconstructs a Huffman tree from its binary representation
+// Reads the first bit to determine node type:
+// - '1' bit means leaf node (followed by 8 symbol bits)
+// - '0' bit means internal node (followed by left and right child trees)
+// This reverses the process done by serialize_tree_to_bits
 pub fn deserialize_tree<R: std::io::Read>(
     bit_stream: &mut InputBitStream<R>,
 ) -> std::io::Result<HuffmanNode> {
@@ -20,6 +25,9 @@ pub fn deserialize_tree<R: std::io::Read>(
     }
 }
 
+// Reconstructs a leaf node from the bit stream
+// Reads the next 8 bits to get the symbol value
+// Creates a new leaf node with that symbol (frequency set to 1 since it's not needed for decompression)
 fn deserialize_leaf_node<R: std::io::Read>(
     bit_stream: &mut InputBitStream<R>,
 ) -> std::io::Result<HuffmanNode> {
@@ -27,6 +35,10 @@ fn deserialize_leaf_node<R: std::io::Read>(
     Ok(HuffmanNode::new_leaf(symbol, 1))
 }
 
+// Reconstructs an internal node from the bit stream
+// Recursively deserializes the left child tree, then the right child tree
+// Uses Result chaining (and_then) to handle errors from either child
+// Combines both children into a new internal node
 fn deserialize_internal_node<R: std::io::Read>(
     bit_stream: &mut InputBitStream<R>,
 ) -> std::io::Result<HuffmanNode> {
@@ -36,6 +48,10 @@ fn deserialize_internal_node<R: std::io::Read>(
     })
 }
 
+// Reads exactly 8 bits from the stream and combines them into a byte
+// Reads bits from most significant to least significant position
+// Uses try_fold to accumulate bits: starts with 0, shifts left and adds each new bit
+// Example: reading bits 1,0,1,1,0,0,1,0 produces byte value 178
 fn read_symbol_from_bits<R: std::io::Read>(
     bit_stream: &mut InputBitStream<R>,
 ) -> std::io::Result<u8> {

@@ -3,6 +3,10 @@ use std::collections::HashMap;
 
 pub type HuffmanCodeMap = HashMap<u8, String>;
 
+// Recursively walks through the Huffman tree to extract binary codes
+// For leaf nodes: returns the symbol paired with its accumulated code
+// For internal nodes: explores both children, adding '0' for left, '1' for right
+// Combines all symbol-code pairs from the entire subtree into a single list
 fn extract_codes_recursive(node: &HuffmanNode, current_code: String) -> Vec<(u8, String)> {
     match node.symbol() {
         Some(symbol) => vec![(symbol, current_code)],
@@ -21,6 +25,10 @@ fn extract_codes_recursive(node: &HuffmanNode, current_code: String) -> Vec<(u8,
     }
 }
 
+// Extracts all Huffman codes from a tree into a lookup table
+// Special case: if tree has only one symbol, assigns code "0"
+// General case: recursively walks tree to build codes, then converts to HashMap
+// Returns a map where each byte maps to its binary code string
 pub fn extract_huffman_codes(tree: &HuffmanNode) -> HuffmanCodeMap {
     if tree.is_leaf() {
         tree.symbol()
