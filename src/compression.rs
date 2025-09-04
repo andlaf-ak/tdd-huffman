@@ -34,13 +34,13 @@ fn encode_input_stream<R: Read, W: std::io::Write>(
     bit_stream: &mut OutputBitStream<W>,
 ) -> std::io::Result<()> {
     let mut buffer = [0u8; 8192];
-    
+
     loop {
         let bytes_read = input_reader.read(&mut buffer)?;
         if bytes_read == 0 {
             break;
         }
-        
+
         let byte_iter = buffer[..bytes_read].iter().map(|&b| Ok(b));
         for bit_result in encode_bytes(byte_iter, codes) {
             let bit = bit_result?;
